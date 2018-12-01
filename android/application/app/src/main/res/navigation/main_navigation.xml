@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_navigation"
+    app:startDestination="@id/nav_feed">
+
+    <fragment
+        android:id="@+id/nav_feed"
+        android:name="com.tsquaredapplications.yhack2018.DeviceFeedFragment"
+        android:label="fragment_device_feed"
+        tools:layout="@layout/fragment_device_feed" />
+    <fragment
+        android:id="@+id/nav_details"
+        android:name="com.tsquaredapplications.yhack2018.DeviceDetailsFragment"
+        android:label="fragment_device_details"
+        tools:layout="@layout/fragment_device_details" />
+    <fragment
+        android:id="@+id/nav_home_details"
+        android:name="com.tsquaredapplications.yhack2018.HomeDetailsFragment"
+        android:label="fragment_home_details"
+        tools:layout="@layout/fragment_home_details" />
+</navigation>
