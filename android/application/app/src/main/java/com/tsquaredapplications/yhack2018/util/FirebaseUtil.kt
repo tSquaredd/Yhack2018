@@ -9,5 +9,18 @@ class FirebaseUtil {
             return FirebaseDatabase.getInstance().reference
                 .child("devices").child(deviceId).child("status").child("isOn")
         }
+
+        fun getOutletNamesDbRef(deviceId:String): DatabaseReference{
+            return FirebaseDatabase.getInstance().reference.child("device-names").child(deviceId)
+        }
+
+        fun getOutletDataListDbRef(deviceId: String): DatabaseReference =
+            FirebaseDatabase.getInstance().reference
+                .child("devices").child(deviceId).child("data").child("list")
+
+
+        fun getOutletLatestWattsDbRef(deviceId: String): DatabaseReference =
+                FirebaseDatabase.getInstance().reference
+                    .child("devices").child(deviceId).child("data").child("latest").child("watts")
     }
 }

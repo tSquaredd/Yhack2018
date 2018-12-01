@@ -8,6 +8,7 @@ class DataViewModel : ViewModel() {
     private var outletOneLiveData = MutableLiveData<Boolean>()
     private var outletTwoLiveData = MutableLiveData<Boolean>()
 
+
     init {
 
         outletOneLiveData = repo.getSwitchObservable(0)
@@ -25,4 +26,11 @@ class DataViewModel : ViewModel() {
         repo.setSwitch(deviceId, isOn)
     }
 
+    fun getNameObservable(deviceId: String): MutableLiveData<String>{
+       return  repo.getNameObservable(deviceId)
+    }
+
+    fun getCurrentUsageObservable(deviceId: String) = repo.getCurrentUsageObservable(deviceId)
+
+    fun getUsageListObservable(deviceId: String) = repo.getUsageListObservable(deviceId)
 }

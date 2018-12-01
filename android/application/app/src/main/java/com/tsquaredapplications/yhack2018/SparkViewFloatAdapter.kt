@@ -2,7 +2,7 @@ package com.tsquaredapplications.yhack2018
 
 import com.robinhood.spark.SparkAdapter
 
-class SparkViewFloatAdapter(val yData: ArrayList<Float>): SparkAdapter() {
+class SparkViewFloatAdapter(val yData: List<Float>): SparkAdapter() {
 
 
     override fun getY(index: Int): Float {
@@ -18,10 +18,10 @@ class SparkViewFloatAdapter(val yData: ArrayList<Float>): SparkAdapter() {
         return yData.size
     }
 
-    fun addReading(value: Float){
-        yData.add(value)
-        notifyDataSetChanged()
-    }
+//    fun addReading(value: Float){
+//        yData.add(value)
+//        notifyDataSetChanged()
+//    }
 
     fun isEmpty() = yData.isEmpty()
 }
