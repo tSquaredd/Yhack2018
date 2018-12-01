@@ -2,6 +2,7 @@ const express = require('express');
 const {serverLog, errorLog, routeLog} = require('../logs/log');
 const {getUserOptions} = require('../functions/helpers');
 const passport = require('passport');
+const https = require('https');
 
 const router = express.Router();
 
@@ -55,7 +56,7 @@ router.get('/update/:device/:time/:watts', (req, res) => {
     res.send(`Device: ${device}, Time: ${time}, Watts: ${watts}`);
 });
 
-router.get('/status/:device/:status', (req, res) => {
+router.get('/status/:device/:isOn', (req, res) => {
     const device = req.params.device;
     const status = req.params.status;
 
@@ -66,8 +67,35 @@ router.get('/status/:device/:status', (req, res) => {
         isOn: status
     };
 
-    res.set('Content-Type', 'application/json');
-    res.send(result);
+    var info = {
+        'time': new Date(),
+        'isOn': status
+    };
+
+    const options = {
+        hostname: 'us-central1-yhack2018-77c5f.cloudfunctions.net',
+        port: 443,
+        path: `/getStatus?device=${device}&isOn=${status}`,
+        method: 'GET'
+      };
+      
+        const httpsRequest = https.request(options, (httpsResponse) => {
+            console.log('statusCode:', httpsResponse.statusCode);
+            console.log('headers:', httpsResponse.headers);
+    
+            httpsResponse.on('data', (d) => {
+                process.stdout.write(d);
+            });
+
+            httpsResponse.on('end', () => {
+                console.log("WORKING");
+                res.set('Content-Type', 'application/json');
+                res.send(result);
+            });
+        });
+
+
+    
 });
 
 

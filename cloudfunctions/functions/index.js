@@ -22,16 +22,43 @@ function workedResponse(res) {
     res.set('Content-Type', 'text/plain');
     return res.send('Worked');
 }
+
 function errorResponse(res) {
     res.set('Content-Type', 'text/plain');
     return res.send('Error');
 }
+
 function sendJSON(res, json) {
     res.set('Content-Type', 'application/json');
     return res.send(json);
 }
+
 function logError(err) {
     console.log(err);
+}
+
+function getCarbonInfo(data, device) {
+    const oneCount             = Math.round(100 * parseInt(data[DEVICE][device].totals.count)) / 100;
+    const oneTotal             = Math.round(100 * parseFloat(data[DEVICE][device].totals.watts)) / 100;
+    const oneCurrent           = Math.round(100 * parseFloat(data[DEVICE][device].data.latest.watts)) / 100;
+
+    const pricePerKwH          = Math.round(100 * parseFloat(data.energy.price)) / 100;
+    const carbonIntensity      = Math.round(100 * parseFloat(data.energy.carbon.carbonIntensity)) / 100;
+    const fossilFuelPercentage = Math.round(100 * parseFloat(data.energy.carbon.fossilFuelPercentage)) / 100;
+
+    return {
+        carbon: {
+            fossilFuelPercentage: fossilFuelPercentage,
+            current: oneCurrent * carbonIntensity,
+            total: oneTotal * carbonIntensity,
+            average: (oneTotal / oneCount) * carbonIntensity
+        },
+        price: {
+            total: oneTotal * pricePerKwH,
+            current: oneCurrent * pricePerKwH,
+            average: (oneTotal / oneCount) * pricePerKwH
+        }
+    };
 }
 
 
@@ -67,10 +94,12 @@ exports.addData = functions.https.onRequest((req, res) => {
             // Reading the current values from the database for this device
             return admin.database().ref(`/${DEVICE}/${device}/totals`).once('value').then(snapshot => {
 
-                total = parseFloat(value) + parseFloat(snapshot.val().watts);
+                const total = parseFloat(value) + parseFloat(snapshot.val().watts);
+                const count = 1 + parseInt(snapshot.val().count);
+
 
                 // Updating the device's total wattage used
-                return admin.database().ref(`/${DEVICE}/${device}/totals`).update({watts: total}).then(snapshot => {
+                return admin.database().ref(`/${DEVICE}/${device}/totals`).update({watts: total, count: count}).then(snapshot => {
                     return workedResponse(res);
                 });
 
@@ -183,7 +212,7 @@ Example:
 https://us-central1-testing-8e4bf.cloudfunctions.net/getDeviceNames
 */
 exports.getDeviceTotalUsage = functions.https.onRequest((req, res) => {
-    const device = req.params.device;
+    const device = req.query.device;
 
     // Nesting promises is bad, but it works 
     return admin.database().ref(`/${DEVICE}/${device}/totals`).once('value').then(snapshot => {
@@ -220,7 +249,7 @@ exports.getHomeUsage = functions.https.onRequest((req, res) => {
     });
 });
 
-/* Get Home Usage - Gets the current household total lifetime usage
+/* Get Current Home Usage - Gets the current household total usage
 Example:
 https://us-central1-testing-8e4bf.cloudfunctions.net/getDeviceNames
 */
@@ -242,5 +271,61 @@ exports.getCurrentHomeUsage = functions.https.onRequest((req, res) => {
         return errorResponse(res);
     });
 });
+
+
+/* Get Home Usage - Gets the current household total lifetime usage
+Example:
+https://us-central1-testing-8e4bf.cloudfunctions.net/getDeviceNames
+*/
+exports.getCarbonAnalysis = functions.https.onRequest((req, res) => {
+    const device = req.query.device;
+
+    console.log("getCarbonAnalysis() Device: " + device);
+
+    // Nesting promises is bad, but it works 
+    return admin.database().ref(`/`).once('value').then(snapshot => {
+        const data = snapshot.val();
+
+        // If a parameter device is passed
+        if (device) {
+            return sendJSON(res, getCarbonInfo(data, device));
+        }
+        
+        // Since no parameter passed, do it all
+        const oneCount = parseInt(data[DEVICE]['outlet-one'].totals.count);
+        const oneTotal = parseFloat(data[DEVICE]['outlet-one'].totals.watts);
+        const oneCurrent = parseFloat(data[DEVICE]['outlet-one'].data.latest.watts);
+
+        const twoCount = parseInt(data[DEVICE]['outlet-two'].totals.count);
+        const twoTotal = parseFloat(data[DEVICE]['outlet-two'].totals.watts);
+        const twoCurrent = parseFloat(data[DEVICE]['outlet-two'].data.latest.watts);
+
+        const pricePerKwH = parseFloat(data.energy.price);
+        const carbonIntensity = parseFloat(data.energy.carbon.carbonIntensity);
+        const fossilFuelPercentage = parseFloat(data.energy.carbon.fossilFuelPercentage);
+
+        const result = {
+            carbon: {
+                fossilFuelPercentage: fossilFuelPercentage,
+                current: (oneCurrent + twoCurrent) * carbonIntensity,
+                total: (oneTotal + twoTotal) * carbonIntensity,
+                average: ((oneTotal + twoTotal) / (oneCount + twoCount)) * carbonIntensity
+            },
+            price: {
+                total: (oneTotal + twoTotal) * pricePerKwH,
+                current: (oneCurrent + twoCurrent) * pricePerKwH,
+                average: ((oneTotal + twoTotal) / (oneCount + twoCount)) * pricePerKwH
+            }
+        };
+
+
+        return sendJSON(res, result);
+    }).catch(err => {
+        logError(err);
+        return errorResponse(res);
+    });
+});
+
+
 
 
