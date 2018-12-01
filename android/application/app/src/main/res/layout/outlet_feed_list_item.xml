@@ -14,8 +14,9 @@
         <com.robinhood.spark.SparkView
             android:id="@+id/spark_view"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_margin="8dp" />
+            android:layout_height="100dp"
+            android:layout_margin="8dp"
+            app:spark_lineColor="@color/colorPrimary"/>
 
         <TextView
             android:id="@+id/outlet_name"

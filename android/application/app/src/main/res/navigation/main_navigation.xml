@@ -7,17 +7,17 @@
 
     <fragment
         android:id="@+id/nav_feed"
-        android:name="com.tsquaredapplications.yhack2018.DeviceFeedFragment"
+        android:name="com.tsquaredapplications.yhack2018.views.DeviceFeedFragment"
         android:label="fragment_device_feed"
         tools:layout="@layout/fragment_device_feed" />
     <fragment
         android:id="@+id/nav_details"
-        android:name="com.tsquaredapplications.yhack2018.DeviceDetailsFragment"
+        android:name="com.tsquaredapplications.yhack2018.views.DeviceDetailsFragment"
         android:label="fragment_device_details"
         tools:layout="@layout/fragment_device_details" />
     <fragment
         android:id="@+id/nav_home_details"
-        android:name="com.tsquaredapplications.yhack2018.HomeDetailsFragment"
+        android:name="com.tsquaredapplications.yhack2018.views.HomeDetailsFragment"
         android:label="fragment_home_details"
         tools:layout="@layout/fragment_home_details" />
 </navigation>
