@@ -133,4 +133,12 @@ class DataRepository {
 
     fun getUsageListObservable(deviceId: String): MutableLiveData<List<Float>> =
             if (deviceId == OutletNameUtil.OUTLET_ONE) outletOneListLiveData else outletTwoListLiveData
+
+    fun masterToggle(toOn: Boolean) {
+        val dbRefOne = FirebaseUtil.getOutletSwitchDbRef(OutletNameUtil.OUTLET_ONE)
+        dbRefOne.setValue(toOn.toString())
+
+        val dbRefTwo = FirebaseUtil.getOutletSwitchDbRef(OutletNameUtil.OUTLET_TWO)
+        dbRefTwo.setValue(toOn.toString())
+    }
 }

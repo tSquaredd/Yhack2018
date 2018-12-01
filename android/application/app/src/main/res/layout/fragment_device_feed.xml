@@ -6,27 +6,42 @@
     android:layout_height="match_parent"
     tools:context=".views.DeviceFeedFragment">
 
-    <!--<androidx.recyclerview.widget.RecyclerView-->
-    <!--android:id="@+id/outlet_recycler_view"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"/>-->
+    <TextView
+        android:id="@+id/master_switch_text"
+        style="@style/TextAppearance.AppCompat.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="@string/master_switch"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Switch
+        android:id="@+id/master_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <include
         android:id="@+id/outlet_one"
         layout="@layout/outlet_feed_list_item"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_margin="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/outlet_two"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/master_switch_text" />
 
     <include
         android:id="@+id/outlet_two"
         layout="@layout/outlet_feed_list_item"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_margin="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/outlet_one" />
+        app:layout_constraintTop_toBottomOf="@+id/outlet_one" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -26,6 +26,7 @@ class DeviceFeedFragment : Fragment() {
 
     private lateinit var viewModel: DataViewModel
 
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         viewModel = ViewModelProviders.of(this).get(DataViewModel::class.java)
         // Inflate the layout for this fragment
@@ -80,22 +81,27 @@ class DeviceFeedFragment : Fragment() {
         })
     }
 
+
     private fun setSwitchListeners() {
+        master_switch.setOnCheckedChangeListener { buttonView, isChecked ->
+            viewModel.masterToggle(isChecked)
+        }
+
         outlet_one.outlet_switch.setOnCheckedChangeListener { buttonView, isChecked ->
-            viewModel.setSwitch("outlet-one", isChecked)
+            viewModel.setSwitch(OutletNameUtil.OUTLET_ONE, isChecked)
         }
 
         outlet_two.outlet_switch.setOnCheckedChangeListener { buttonView, isChecked ->
-            viewModel.setSwitch("outlet-two", isChecked)
+            viewModel.setSwitch(OutletNameUtil.OUTLET_TWO, isChecked)
         }
     }
 
     private fun setNameObservers() {
-        viewModel.getNameObservable("outlet-one").observe(this, Observer {
+        viewModel.getNameObservable(OutletNameUtil.OUTLET_ONE).observe(this, Observer {
             outlet_one.outlet_name.text = it
         })
 
-        viewModel.getNameObservable("outlet-two").observe(this, Observer {
+        viewModel.getNameObservable(OutletNameUtil.OUTLET_TWO).observe(this, Observer {
             outlet_two.outlet_name.text = it
         })
     }

@@ -33,4 +33,8 @@ class DataViewModel : ViewModel() {
     fun getCurrentUsageObservable(deviceId: String) = repo.getCurrentUsageObservable(deviceId)
 
     fun getUsageListObservable(deviceId: String) = repo.getUsageListObservable(deviceId)
+
+    fun masterToggle(toOn: Boolean){
+        repo.masterToggle(toOn)
+    }
 }
