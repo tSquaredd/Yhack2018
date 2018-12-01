@@ -79,7 +79,7 @@ exports.addData = functions.https.onRequest((req, res) => {
     console.log(`addData() - Time: ${timestamp}, Device: ${device}, Value: ${value}`);
 
     const info = {
-        'watts': value,
+        'watts': Math.round(100 * value) / 100,
         'time': timestamp
     };
 
@@ -94,12 +94,12 @@ exports.addData = functions.https.onRequest((req, res) => {
             // Reading the current values from the database for this device
             return admin.database().ref(`/${DEVICE}/${device}/totals`).once('value').then(snapshot => {
 
-                const total = parseFloat(value) + parseFloat(snapshot.val().watts);
+                const total = Math.round(100 * parseFloat(value) + parseFloat(snapshot.val().watts)) / 100;
                 const count = 1 + parseInt(snapshot.val().count);
-
+                const avg = Math.round(100 * parseFloat(total / count)) / 100;
 
                 // Updating the device's total wattage used
-                return admin.database().ref(`/${DEVICE}/${device}/totals`).update({watts: total, count: count}).then(snapshot => {
+                return admin.database().ref(`/${DEVICE}/${device}/totals`).update({watts: total, count: count, average: avg}).then(snapshot => {
                     return workedResponse(res);
                 });
 
