@@ -13,6 +13,7 @@ admin.initializeApp();
  * Constants
  *****************************************************************************/
 const DEVICE = 'devices';
+const DEVICE_NAMES = 'device-names';
 
 /******************************************************************************
  * Useful Functions
@@ -117,6 +118,19 @@ https://us-central1-testing-8e4bf.cloudfunctions.net/getDevices
 exports.getDevices = functions.https.onRequest((req, res) => {
     // Nesting promises is bad, but it works 
     return admin.database().ref(`/${DEVICE}`).once('value').then(snapshot => {
+        return sendJSON(res, snapshot.val());
+    }).catch(err => {
+        return res.send(err);
+    });
+});
+
+/* Get Devices - Get the currently installed devices
+Example:
+https://us-central1-testing-8e4bf.cloudfunctions.net/getDeviceNames
+*/
+exports.getDeviceNames = functions.https.onRequest((req, res) => {
+    // Nesting promises is bad, but it works 
+    return admin.database().ref(`/${DEVICE_NAMES}`).once('value').then(snapshot => {
         return sendJSON(res, snapshot.val());
     }).catch(err => {
         return res.send(err);
