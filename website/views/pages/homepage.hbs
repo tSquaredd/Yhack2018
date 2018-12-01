@@ -1,0 +1,38 @@
+Hello, welcome to the project!
+
+<button id="device1" class="btn btn-primary" onclick="turnOn()">Turn on Device 1</button>
+
+{{ outlet1.latest.watts }}
+
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+
+/******************************************************************************
+ * UI Functions
+ *****************************************************************************/
+
+function turnOn() {
+    fetch('http://localhost:4444/status/outlet-one/true').then(function(response) {
+        return response.json();
+    })
+    .then(function(myJson) {
+        console.log(JSON.stringify(myJson));
+    }).catch(err => {
+        console.log(err);
+    });
+}
+
+
+/******************************************************************************
+ * Socket Functions
+ *****************************************************************************/
+    
+    var socket = io();
+    socket.emit('connection');
+   
+    
+    window.onbeforeunload = function(e) {
+        socket.disconnect(0);
+    };
+</script>

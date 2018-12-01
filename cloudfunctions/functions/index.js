@@ -22,14 +22,21 @@ function workedResponse(res) {
     res.set('Content-Type', 'text/plain');
     return res.send('Worked');
 }
+function errorResponse(res) {
+    res.set('Content-Type', 'text/plain');
+    return res.send('Error');
+}
 function sendJSON(res, json) {
     res.set('Content-Type', 'application/json');
     return res.send(json);
 }
+function logError(err) {
+    console.log(err);
+}
 
 
 /******************************************************************************
- * Data POSTing Routes
+ * Data ADDing Routes
  *****************************************************************************/
 
 /* Add Function - Add values to a device in the Firebase
@@ -42,18 +49,42 @@ exports.addData = functions.https.onRequest((req, res) => {
     const device = req.query.device;
     const value = req.query.value;
 
+    console.log(`addData() - Time: ${timestamp}, Device: ${device}, Value: ${value}`);
+
     const info = {
         'watts': value,
         'time': timestamp
     };
 
     // Nesting promises is bad, but it works 
+
+    // Pushing the info into the array of timestamp/watts values
     return admin.database().ref(`/${DEVICE}/${device}/data/list`).push(info).then(snapshot => {
+
+        // Updating the latest value inside the device
         return admin.database().ref(`/${DEVICE}/${device}/data/latest`).update(info).then(snapshot => {
-            return workedResponse(res);
+
+            // Reading the current values from the database for this device
+            return admin.database().ref(`/${DEVICE}/${device}/totals`).once('value').then(snapshot => {
+
+                total = parseFloat(value) + parseFloat(snapshot.val().watts);
+
+                // Updating the device's total wattage used
+                return admin.database().ref(`/${DEVICE}/${device}/totals`).update({watts: total}).then(snapshot => {
+                    return workedResponse(res);
+                });
+
+            }).catch(err => {
+                logError(err);
+                return errorResponse(res);
+            });
         });
     });
 });
+
+/******************************************************************************
+ * Data UPDATEing Routes
+ *****************************************************************************/
 
 /* Set Status Function - Set the status of a device
 Example:
@@ -64,6 +95,8 @@ exports.setStatus = functions.https.onRequest((req, res) => {
     const timestamp = req.query.time;
     const device = req.query.device;
     const isOn = req.query.isOn;
+
+    console.log(`setStatus() - Time: ${timestamp}, Device: ${device}, isOn: ${isOn}`);
 
     var info = {
         'time': timestamp,
@@ -76,7 +109,7 @@ exports.setStatus = functions.https.onRequest((req, res) => {
 });
 
 /******************************************************************************
- * Data GETing Routes
+ * Data READing Routes
  *****************************************************************************/
 
 /* Get Latest Wattage - Get the latest time & wattage from the device
@@ -87,11 +120,14 @@ exports.getLatest = functions.https.onRequest((req, res) => {
     // Getting the parameters from the route request
     const device = req.query.device;
 
+    console.log(`getLatest() - Device: ${device}`);
+
     // Nesting promises is bad, but it works 
     return admin.database().ref(`/${DEVICE}/${device}/data/latest`).once('value').then(snapshot => {
         return sendJSON(res, snapshot.val());
     }).catch(err => {
-        return res.send(err);
+        logError(err);
+        return errorResponse(res);
     });
 });
 
@@ -103,11 +139,14 @@ exports.getStatus = functions.https.onRequest((req, res) => {
     // Getting the parameters from the route request
     const device = req.query.device;
 
+    console.log(`getStatus() - Device: ${device}`)
+
     // Nesting promises is bad, but it works 
     return admin.database().ref(`/${DEVICE}/${device}/status`).once('value').then(snapshot => {
         return sendJSON(res, snapshot.val());
     }).catch(err => {
-        return res.send(err);
+        logError(err);
+        return errorResponse(res);
     });
 });
 
@@ -120,11 +159,12 @@ exports.getDevices = functions.https.onRequest((req, res) => {
     return admin.database().ref(`/${DEVICE}`).once('value').then(snapshot => {
         return sendJSON(res, snapshot.val());
     }).catch(err => {
-        return res.send(err);
+        logError(err);
+        return errorResponse(res);
     });
 });
 
-/* Get Devices - Get the currently installed devices
+/* Get Device Names - Get the names of all devices available
 Example:
 https://us-central1-testing-8e4bf.cloudfunctions.net/getDeviceNames
 */
@@ -133,7 +173,73 @@ exports.getDeviceNames = functions.https.onRequest((req, res) => {
     return admin.database().ref(`/${DEVICE_NAMES}`).once('value').then(snapshot => {
         return sendJSON(res, snapshot.val());
     }).catch(err => {
-        return res.send(err);
+        logError(err);
+        return errorResponse(res);
+    });
+});
+
+/* Get Device Total Usage - Gets the total usage of a single device
+Example:
+https://us-central1-testing-8e4bf.cloudfunctions.net/getDeviceNames
+*/
+exports.getDeviceTotalUsage = functions.https.onRequest((req, res) => {
+    const device = req.params.device;
+
+    // Nesting promises is bad, but it works 
+    return admin.database().ref(`/${DEVICE}/${device}/totals`).once('value').then(snapshot => {
+
+        return sendJSON(res, snapshot.val());
+    }).catch(err => {
+        logError(err);
+        return errorResponse(res);
+    });
+});
+
+
+
+/* Get Home Usage - Gets the current household total lifetime usage
+Example:
+https://us-central1-testing-8e4bf.cloudfunctions.net/getDeviceNames
+*/
+exports.getHomeUsage = functions.https.onRequest((req, res) => {
+    // Nesting promises is bad, but it works 
+    return admin.database().ref(`/${DEVICE}`).once('value').then(snapshot => {
+        const query = snapshot.val();
+
+        console.log(query);
+
+        const outletOneTotal = parseFloat(query['outlet-one'].totals.watts);
+        const outletTwoTotal = parseFloat(query['outlet-two'].totals.watts);
+
+        const total = outletOneTotal + outletTwoTotal;
+
+        return sendJSON(res, {watts: total});
+    }).catch(err => {
+        logError(err);
+        return errorResponse(res);
+    });
+});
+
+/* Get Home Usage - Gets the current household total lifetime usage
+Example:
+https://us-central1-testing-8e4bf.cloudfunctions.net/getDeviceNames
+*/
+exports.getCurrentHomeUsage = functions.https.onRequest((req, res) => {
+    // Nesting promises is bad, but it works 
+    return admin.database().ref(`/${DEVICE}`).once('value').then(snapshot => {
+        const query = snapshot.val();
+
+        console.log(query);
+
+        const outletOneTotal = parseFloat(query['outlet-one'].data.latest.watts);
+        const outletTwoTotal = parseFloat(query['outlet-two'].data.latest.watts);
+
+        const total = outletOneTotal + outletTwoTotal;
+
+        return sendJSON(res, {watts: total});
+    }).catch(err => {
+        logError(err);
+        return errorResponse(res);
     });
 });
 

@@ -1,1 +1,4 @@
 cloudfunctions/node_modules
+website/node_modules
+website/logs/*.log
+website/.env
