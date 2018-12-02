@@ -70,15 +70,10 @@ router.get('/status/:device/:isOn', (req, res) => {
     const device = req.params.device;
     const status = req.params.isOn;
 
-    console.log(`${device} - ${status}`);
-
     // Reading the output file
     var lock = fs.readFileSync('kidLock.txt', 'utf8');
 
-    console.log("Lock: " + lock);
-
     if (lock === "true") {
-        console.log("LOCKED OUT");
         res.set('Content-Type', 'application/json');
         return res.send({status: "Locked out"});
     }
@@ -95,7 +90,6 @@ router.get('/status/:device/:isOn', (req, res) => {
             var result = '';
             // When it gets a data chunk add it to the result
             response.on('data', (chunk) => {
-                console.log('Something');
                 result += chunk;
             });
 
