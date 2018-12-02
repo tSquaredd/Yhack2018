@@ -30,16 +30,25 @@ router.all('/*', (req, res, next) => {
 router.get('/', (req, res) => {
     // console.log(firebase.database());
 
-    var ref = firebase.database().ref("/devices").once('value').then(function(snapshot) {
+    var ref = firebase.database().ref("/").once('value').then(function(snapshot) {
         // console.log(snapshot.val());
 
-        const device1 = snapshot.val()['outlet-one'];
-        const device2 = snapshot.val()['outlet-two'];
+        const device1 = snapshot.val().devices['outlet-one'];
+        const device2 = snapshot.val().devices['outlet-two'];
+        const deviceNames = snapshot.val()['device-names'];
+
+        if (device1.status.isOn === "true") {
+            device1.status.isOn = true;
+        } else { device1.status.isOn = false; }
+
+        if (device2.status.isOn === "true") {
+            device2.status.isOn = true;
+        } else { device2.status.isOn = false; }
 
         // console.log(device1);
         // console.log(device2);
 
-        res.render('pages/homepage', {device1: device1, device2: device2});
+        res.render('pages/homepage', {deviceNames: deviceNames, device1: device1, device2: device2});
         // ...
       });
 
