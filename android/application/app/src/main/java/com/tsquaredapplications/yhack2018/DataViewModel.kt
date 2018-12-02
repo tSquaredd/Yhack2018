@@ -40,4 +40,6 @@ class DataViewModel : ViewModel() {
     fun getTotalCostObservable(deviceId: String) = repo.getTotalCostObservable(deviceId)
 
     fun getAvgCostObservable(deviceId: String) = repo.getAvgCostObservable(deviceId)
+
+    fun getGraphObservable(deviceId: String) = repo.getLineGraphObservable(deviceId)
 }

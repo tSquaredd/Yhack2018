@@ -4,6 +4,8 @@ import androidx.lifecycle.MutableLiveData
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import com.jjoe64.graphview.series.DataPoint
+import com.jjoe64.graphview.series.LineGraphSeries
 import com.tsquaredapplications.yhack2018.util.FirebaseUtil
 import com.tsquaredapplications.yhack2018.util.OutletNameUtil
 
@@ -17,6 +19,9 @@ class DataRepository {
 
     private var outletOneListLiveData = MutableLiveData<List<Float>>()
     private var outletTwoListLiveData = MutableLiveData<List<Float>>()
+
+    private var outletOneGraphPointsLiveData = MutableLiveData<LineGraphSeries<DataPoint>>()
+    private var outletTwoGraphPointsLiveData = MutableLiveData<LineGraphSeries<DataPoint>>()
 
     private var outletOneCurrentLiveData = MutableLiveData<Double>()
     private var outletTwoCurrentLiveData = MutableLiveData<Double>()
@@ -55,8 +60,8 @@ class DataRepository {
         getOutletCurrentStream(OutletNameUtil.OUTLET_ONE, outletOneCurrentLiveData)
         getOutletCurrentStream(OutletNameUtil.OUTLET_TWO, outletTwoCurrentLiveData)
 
-        getOutletListStream(OutletNameUtil.OUTLET_ONE, outletOneListLiveData)
-        getOutletListStream(OutletNameUtil.OUTLET_TWO, outletTwoListLiveData)
+        getOutletListStream(OutletNameUtil.OUTLET_ONE, outletOneListLiveData, outletOneGraphPointsLiveData)
+        getOutletListStream(OutletNameUtil.OUTLET_TWO, outletTwoListLiveData, outletTwoGraphPointsLiveData)
 
         getOutletAvgCurrentStream(OutletNameUtil.OUTLET_ONE, outletOneAvgCurrentLiveData)
         getOutletAvgCurrentStream(OutletNameUtil.OUTLET_TWO, outletTwoAvgCurrentLiveData)
@@ -226,7 +231,7 @@ class DataRepository {
         })
     }
 
-    private fun getOutletListStream(deviceId: String, liveData: MutableLiveData<List<Float>>) {
+    private fun getOutletListStream(deviceId: String, liveData: MutableLiveData<List<Float>>, graphLiveData: MutableLiveData<LineGraphSeries<DataPoint>>) {
 
         val dbRef = FirebaseUtil.getOutletDataListDbRef(deviceId)
 
@@ -238,13 +243,23 @@ class DataRepository {
             override fun onDataChange(p0: DataSnapshot) {
                val children = p0.children
                 val wattsList = arrayListOf<Float>()
+
+                val graphArrayList = arrayListOf<DataPoint>()
+                var count = 0
                 for (child in children){
+
                     val watts = child.child("watts").getValue(Double::class.java)
                     watts?.let { nonNullWatts ->
                         wattsList.add(nonNullWatts.toFloat())
+                        graphArrayList.add(DataPoint(count.toDouble(), nonNullWatts))
+
+                        count++
                     }
                 }
+                val graphPointList = LineGraphSeries<DataPoint>(graphArrayList.toTypedArray())
                 liveData.value = wattsList
+                graphLiveData.value = graphPointList
+
             }
         })
     }
@@ -340,5 +355,8 @@ class DataRepository {
 
     fun getCurrentCostObservable(deviceId: String): MutableLiveData<Double> =
         if (deviceId == OutletNameUtil.OUTLET_ONE) outletOneCostCurrentLiveData else outletTwoCostCurrentLiveData
+
+    fun getLineGraphObservable(deviceId: String): MutableLiveData<LineGraphSeries<DataPoint>> =
+            if (deviceId == OutletNameUtil.OUTLET_ONE) outletOneGraphPointsLiveData else outletTwoGraphPointsLiveData
 
 }

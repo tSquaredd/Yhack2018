@@ -5,13 +5,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.jjoe64.graphview.series.DataPoint
 import com.robinhood.ticker.TickerUtils
 import com.tsquaredapplications.yhack2018.DataViewModel
 import com.tsquaredapplications.yhack2018.R
 import kotlinx.android.synthetic.main.fragment_device_details.*
+import com.jjoe64.graphview.series.LineGraphSeries
+
+
 
 
 class DeviceDetailsFragment : androidx.fragment.app.Fragment() {
@@ -46,6 +49,18 @@ class DeviceDetailsFragment : androidx.fragment.app.Fragment() {
         setCostAvgObserver()
         setCostTotalObserver()
 
+        setGraphObserver()
+
+    }
+
+    private fun setGraphObserver() {
+        viewModel.getGraphObservable(deviceId).observe(this, Observer {
+
+            graph_view.addSeries(it)
+           graph_view.viewport.isXAxisBoundsManual = true
+            graph_view.viewport.setMaxX(it.highestValueX)
+
+        })
     }
 
     private fun setCostTotalObserver() {
