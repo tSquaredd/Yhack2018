@@ -15,8 +15,6 @@ import kotlinx.android.synthetic.main.fragment_device_details.*
 import com.jjoe64.graphview.series.LineGraphSeries
 
 
-
-
 class DeviceDetailsFragment : androidx.fragment.app.Fragment() {
 
     lateinit var deviceId: String
@@ -57,7 +55,7 @@ class DeviceDetailsFragment : androidx.fragment.app.Fragment() {
         viewModel.getGraphObservable(deviceId).observe(this, Observer {
 
             graph_view.addSeries(it)
-           graph_view.viewport.isXAxisBoundsManual = true
+            graph_view.viewport.isXAxisBoundsManual = true
             graph_view.viewport.setMaxX(it.highestValueX)
 
         })
@@ -76,7 +74,7 @@ class DeviceDetailsFragment : androidx.fragment.app.Fragment() {
     }
 
     private fun setCostCurrentObserver() {
-        viewModel.getCurrentCostObservable(deviceId).observe(this, Observer{
+        viewModel.getCurrentCostObservable(deviceId).observe(this, Observer {
             cost_current_ticker.text = "$$it"
         })
     }
@@ -104,7 +102,7 @@ class DeviceDetailsFragment : androidx.fragment.app.Fragment() {
     }
 
     private fun setCarbonAvgObserver() {
-        viewModel.getAvgCarbonUsageObservable(deviceId).observe(this, Observer{
+        viewModel.getAvgCarbonUsageObservable(deviceId).observe(this, Observer {
             carbon_avg_ticker.text = "$it"
         })
     }
@@ -128,22 +126,22 @@ class DeviceDetailsFragment : androidx.fragment.app.Fragment() {
     }
 
     private fun setCurrentUsageObserver() {
-        viewModel.getCurrentUsageObservable(deviceId).observe(this, Observer{
+        viewModel.getCurrentUsageObservable(deviceId).observe(this, Observer {
             current_usage_ticker.text = "$it"
         })
     }
 
     private fun setSwitchListener() {
-       device_switch.setOnCheckedChangeListener { buttonView, isChecked ->
+        device_switch.setOnCheckedChangeListener { buttonView, isChecked ->
             viewModel.setSwitch(deviceId, isChecked)
 
-       }
+        }
     }
 
     private fun setSwitchObserver() {
-      viewModel.getSwitchObservable(deviceId).observe(this, Observer {
-          device_switch.isChecked = it
-      })
+        viewModel.getSwitchObservable(deviceId).observe(this, Observer {
+            device_switch.isChecked = it
+        })
     }
 
     private fun setNameObserver() {

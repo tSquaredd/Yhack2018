@@ -1,6 +1,7 @@
 package com.tsquaredapplications.yhack2018.views
 
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -11,6 +12,7 @@ import androidx.lifecycle.ViewModelProviders
 import com.robinhood.ticker.TickerUtils
 import com.tsquaredapplications.yhack2018.DataViewModel
 import com.tsquaredapplications.yhack2018.R
+import com.tsquaredapplications.yhack2018.util.OutletNameUtil
 import kotlinx.android.synthetic.main.fragment_home_details.*
 
 class HomeDetailsFragment : Fragment() {
@@ -41,6 +43,24 @@ class HomeDetailsFragment : Fragment() {
         setTotalCostObserver()
         setAvgCostObserver()
 
+        setGraphObservers()
+
+    }
+
+    private fun setGraphObservers() {
+        viewModel.getGraphObservable(OutletNameUtil.OUTLET_ONE).observe(this, Observer {
+            it.color = Color.RED
+            graph_view.addSeries(it)
+            graph_view.viewport.isXAxisBoundsManual = true
+            graph_view.viewport.setMaxX(it.highestValueX)
+        })
+
+        viewModel.getGraphObservable(OutletNameUtil.OUTLET_TWO).observe(this, Observer {
+            it.color = Color.GREEN
+            graph_view.addSeries(it)
+            graph_view.viewport.isXAxisBoundsManual = true
+            graph_view.viewport.setMaxX(it.highestValueX)
+        })
     }
 
     private fun setAvgCostObserver() {
