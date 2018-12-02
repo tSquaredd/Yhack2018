@@ -20,7 +20,7 @@ class HomeDetailsFragment : Fragment() {
     private lateinit var viewModel: DataViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-       viewModel = ViewModelProviders.of(this).get(DataViewModel::class.java)
+       viewModel = ViewModelProviders.of(activity!!).get(DataViewModel::class.java)
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home_details, container, false)
     }
@@ -48,72 +48,78 @@ class HomeDetailsFragment : Fragment() {
     }
 
     private fun setGraphObservers() {
+
+        graph_view.title = "kW/hr"
+
+
         viewModel.getGraphObservable(OutletNameUtil.OUTLET_ONE).observe(this, Observer {
-            it.color = Color.RED
+            it.color = context!!.getColor(R.color.colorAccent)
             graph_view.addSeries(it)
             graph_view.viewport.isXAxisBoundsManual = true
             graph_view.viewport.setMaxX(it.highestValueX)
         })
 
         viewModel.getGraphObservable(OutletNameUtil.OUTLET_TWO).observe(this, Observer {
-            it.color = Color.GREEN
+            it.color = context!!.getColor(R.color.colorPrimary)
             graph_view.addSeries(it)
             graph_view.viewport.isXAxisBoundsManual = true
             graph_view.viewport.setMaxX(it.highestValueX)
         })
     }
 
+    private fun roundTwo(input: Double): String = String.format("%.2f", input)
+
     private fun setAvgCostObserver() {
         viewModel.getHomeCostAvgObservable().observe(this, Observer {
-            cost_avg_ticker.text = "$$it"
+            cost_avg_ticker.text = "$${roundTwo(it)}"
         })
     }
 
     private fun setTotalCostObserver() {
         viewModel.getHomeCostTotalObservable().observe(this, Observer {
-            cost_total_ticker.text = "$$it"
+            cost_total_ticker.text = "$${roundTwo(it)}"
         })
     }
 
     private fun setCurrentCostObserver() {
         viewModel.getHomeCostCurrentObserver().observe(this, Observer {
-            cost_current_ticker.text = "$$it"
+            cost_current_ticker.text = "$${roundTwo(it)}"
         })
     }
 
     private fun setTotalCarbonObserver() {
         viewModel.getHomeCarbonTotalObservable().observe(this, Observer {
-            carbon_total_ticker.text = "$it"
+            carbon_total_ticker.text = "${roundTwo(it)}"
         })
     }
 
     private fun setAvgCarbonObserver() {
         viewModel.getHomeCarbonAvgObservable().observe(this, Observer {
-            carbon_avg_ticker.text = "$it"
+            carbon_avg_ticker.text = "${roundTwo(it)}"
         })
     }
 
     private fun setCurrentCarbonObserver() {
         viewModel.getHomeCarbonCurrentObservable().observe(this, Observer {
-            carbon_output_ticker.text = "$it"
+            carbon_output_ticker.text = "${roundTwo(it)}"
         })
     }
 
     private fun setCurrentUsageObserver() {
         viewModel.getHomeCurrentUsageObservable().observe(this, Observer {
-            current_usage_ticker.text = "$it"
+            current_usage_ticker.text = "${roundTwo(it)}"
         })
     }
 
     private fun setCurrentTotalObserver(){
         viewModel.getHomeCurrentTotalObservable().observe(this, Observer {
-            total_usage_ticker.text = "$it"
+            total_usage_ticker.text = "${roundTwo(it)}"
         })
     }
 
     private fun setCurrentAvgObserver(){
         viewModel.getHomeCurrentAvgObservable().observe(this, Observer {
-            avg_usage_ticker.text = "$it"
+            avg_usage_ticker.text = "${roundTwo(it)}"
         })
     }
 

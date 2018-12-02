@@ -21,7 +21,7 @@ class DeviceDetailsFragment : androidx.fragment.app.Fragment() {
     private lateinit var viewModel: DataViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        viewModel = ViewModelProviders.of(this).get(DataViewModel::class.java)
+        viewModel = ViewModelProviders.of(activity!!).get(DataViewModel::class.java)
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_device_details, container, false)
     }
@@ -53,7 +53,7 @@ class DeviceDetailsFragment : androidx.fragment.app.Fragment() {
 
     private fun setGraphObserver() {
         viewModel.getGraphObservable(deviceId).observe(this, Observer {
-
+            it.color = this.context!!.getColor(R.color.colorAccent)
             graph_view.addSeries(it)
             graph_view.viewport.isXAxisBoundsManual = true
             graph_view.viewport.setMaxX(it.highestValueX)

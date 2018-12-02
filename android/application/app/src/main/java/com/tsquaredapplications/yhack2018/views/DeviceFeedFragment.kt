@@ -29,7 +29,7 @@ class DeviceFeedFragment : Fragment() {
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        viewModel = ViewModelProviders.of(this).get(DataViewModel::class.java)
+        viewModel = ViewModelProviders.of(activity!!).get(DataViewModel::class.java)
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_device_feed, container, false)
     }
