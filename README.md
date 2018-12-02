@@ -14,3 +14,5 @@
 | getHomeUsage        |                     | https://us-central1-yhack2018-77c5f.cloudfunctions.net/getHomeUsage        |
 | getCurrentHomeUsage |                     | https://us-central1-yhack2018-77c5f.cloudfunctions.net/getCurrentHomeUsage |
 | getDeviceTotalUsage | device              | https://us-central1-yhack2018-77c5f.cloudfunctions.net/getDeviceTotalUsage |
+| getCarbonAnalysis   | OPTIONAL:device     | https://us-central1-yhack2018-77c5f.cloudfunctions.net/getCarbonAnalysis   |
+| resetDatabase       | password            | https://us-central1-yhack2018-77c5f.cloudfunctions.net/resetDatabase       |

@@ -1,19 +1,21 @@
 Hello, welcome to the project!
 
-<button id="device1" class="btn btn-primary" onclick="turnOn()">Turn on Device 1</button>
+<button value="device1" class="btn outlet-{{device1.status.isOn}}" onclick="buttonClick(this)">{{device1.status.isOn}}</button>
+<br><br>
+<button value="device2" class="btn btn-primary outlet-{{device2.status.isOn}}" onclick="buttonClick(this)">{{device2.status.isOn}}</button>
 
-{{ outlet1.latest.watts }}
 
+<br><br>
 
-<script src="/socket.io/socket.io.js"></script>
 <script>
+
 
 /******************************************************************************
  * UI Functions
  *****************************************************************************/
 
-function turnOn() {
-    fetch('http://localhost:4444/status/outlet-one/true').then(function(response) {
+function request(device, status) {
+    fetch(`http://localhost:4444/status/${device}/${status}`).then(function(response) {
         return response.json();
     })
     .then(function(myJson) {
@@ -23,16 +25,53 @@ function turnOn() {
     });
 }
 
-
-/******************************************************************************
- * Socket Functions
- *****************************************************************************/
-    
-    var socket = io();
-    socket.emit('connection');
-   
-    
-    window.onbeforeunload = function(e) {
-        socket.disconnect(0);
-    };
 </script>
+
+
+  <!-- <div id="chart_div"></div>
+
+
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script>
+      google.charts.load('current', {packages: ['corechart', 'line']});
+google.charts.setOnLoadCallback(drawBackgroundColor);
+
+function drawBackgroundColor() {
+      var data = new google.visualization.DataTable();
+      data.addColumn('number', 'Time');
+      data.addColumn('number', 'Watts');
+
+      data.addRows([
+        {{#each device1.data.list }}
+            [{{this.time}}, {{this.watts}}],
+        {{/each}}
+      ]);
+
+      var options = {
+        hAxis: {
+          title: 'Time'
+        },
+        vAxis: {
+          title: 'Popularity'
+        },
+        backgroundColor: '#f1f8e9'
+      };
+
+      var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+      chart.draw(data, options);
+    }
+  </script>
+  -->
+
+<style>
+    .outlet-false {
+        background-color: #ff0000;
+    }
+
+    .outlet-true {
+        background-color: #00ff00;
+    }
+</style>
+
+
+
