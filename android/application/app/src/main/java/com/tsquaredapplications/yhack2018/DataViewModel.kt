@@ -48,4 +48,16 @@ class DataViewModel : ViewModel() {
     fun getHomeCurrentAvgObservable() = repo.getHomeCurrentUsageAvgObservable()
 
     fun getHomeCurrentTotalObservable()= repo.getHomeCurrentTotalObservable()
+
+    fun getHomeCarbonCurrentObservable() = repo.getHomeCarbonCurrentObservable()
+
+    fun getHomeCarbonTotalObservable() = repo.getHomeCarbonTotalObservable()
+
+    fun getHomeCarbonAvgObservable() = repo.getHomeCarbonAvgObservable()
+
+    fun getHomeCostCurrentObserver() = repo.getHomeCostCurrentObservable()
+
+    fun getHomeCostTotalObservable() = repo.getHomeCostTotalObservable()
+
+    fun getHomeCostAvgObservable() = repo.getHomeCostAvgObservable()
 }

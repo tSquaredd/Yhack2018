@@ -18,6 +18,25 @@ class DataRepository {
     var outletTotalOneCurrent = 0.0
     var outletTotalTwoCurrent = 0.0
 
+    var carbonCurrentOne = 0.0
+    var carbonCurrentTwo = 0.0
+
+    var carbonOneAvg = 0.0
+    var carbonTwoAvg = 0.0
+
+    var carbonTotalOne = 0.0
+    var carbonTotalTwo = 0.0
+
+    var costCurrentOne = 0.0
+    var costCurrentTwo = 0.0
+
+    var costAvgOne = 0.0
+    var costAvgTwo = 0.0
+
+    var costTotalOne = 0.0
+    var costTotalTwo = 0.0
+
+
     private var outletOneLiveData = MutableLiveData<Boolean>()
     private var outletTwoLiveData = MutableLiveData<Boolean>()
 
@@ -61,13 +80,14 @@ class DataRepository {
     private var homeCurrentAvgLiveData = MutableLiveData<Double>()
     private var homeCurrentTotalLiveData = MutableLiveData<Double>()
 
-    private var homeTotalCarbonLiveData = MutableLiveData<Double>()
     private var homeCurrentCarbonLiveData = MutableLiveData<Double>()
     private var homeAvgCarbonLiveData = MutableLiveData<Double>()
+    private var homeTotalCarbonLiveData = MutableLiveData<Double>()
 
-    private var homeTotalCostLiveData = MutableLiveData<Double>()
     private var homeCurrentCostLiveData = MutableLiveData<Double>()
     private var homeAvgCostLiveData = MutableLiveData<Double>()
+    private var homeTotalCostLiveData = MutableLiveData<Double>()
+
 
     init {
         getOutletSwitchStream(OutletNameUtil.OUTLET_ONE, outletOneLiveData)
@@ -106,25 +126,9 @@ class DataRepository {
         getOutletCurrentCostStream(OutletNameUtil.OUTLET_ONE, outletOneCostCurrentLiveData)
         getOutletCurrentCostStream(OutletNameUtil.OUTLET_TWO, outletTwoCostCurrentLiveData)
 
-
-
-//        getHomeCurrentUsageStream()
-//        getHomeAvgUsageStream()
-//        getHomeTotalUsageStream()
-//
-//        getHomeTotalCarbonStream()
-//        getHomeAvgCarbonStream()
-//        getHomeCurrentCarbonStream()
-//
-//        getHomeTotalCostStream()
-//        getHomeAvgCostStream()
-//        getHomeCurrentCostStream()
-
     }
 
-//    private fun getHomeCurrentUsageStream() {
-//        val dbRef =
-//    }
+
 
     private fun getOutletTotalCostStream(deviceId: String, liveData: MutableLiveData<Double>){
         val dbRef = FirebaseUtil.getOutletTotalCostDbRef(deviceId)
@@ -137,6 +141,11 @@ class DataRepository {
             override fun onDataChange(p0: DataSnapshot) {
                 val totalCost = p0.getValue(Double::class.java)
                 liveData.value = totalCost
+
+                if (deviceId == OutletNameUtil.OUTLET_ONE) costTotalOne = totalCost!!
+                else costTotalTwo = totalCost!!
+
+                homeTotalCostLiveData.value = costTotalOne + costTotalTwo
             }
 
         })
@@ -153,6 +162,9 @@ class DataRepository {
             override fun onDataChange(p0: DataSnapshot) {
                 val avgCost = p0.getValue(Double::class.java)
                 liveData.value = avgCost
+                if (deviceId == OutletNameUtil.OUTLET_ONE) costAvgOne = avgCost!!
+                else costAvgTwo = avgCost!!
+                homeAvgCostLiveData.value = (costAvgOne + costAvgTwo) / 2
             }
 
         })
@@ -169,6 +181,11 @@ class DataRepository {
             override fun onDataChange(p0: DataSnapshot) {
                 val currentCost = p0.getValue(Double::class.java)
                 liveData.value = currentCost
+                if (deviceId == OutletNameUtil.OUTLET_ONE) costCurrentOne = currentCost!!
+                    else costCurrentTwo = currentCost!!
+
+                homeCurrentCostLiveData.value = costCurrentOne + costCurrentTwo
+
             }
 
         })
@@ -185,6 +202,10 @@ class DataRepository {
             override fun onDataChange(p0: DataSnapshot) {
                 val currentCarbon = p0.getValue(Double::class.java)
                 liveData.value = currentCarbon
+
+                if(deviceId == OutletNameUtil.OUTLET_ONE) carbonCurrentOne = currentCarbon!!
+                else carbonCurrentTwo = currentCarbon!!
+                homeCurrentCarbonLiveData.value = carbonCurrentOne + carbonCurrentTwo
             }
 
         })
@@ -201,6 +222,11 @@ class DataRepository {
             override fun onDataChange(p0: DataSnapshot) {
                 val avgCarbon = p0.getValue(Double::class.java)
                 liveData.value = avgCarbon
+
+                if (deviceId == OutletNameUtil.OUTLET_ONE) carbonOneAvg = avgCarbon!!
+                else carbonTwoAvg = avgCarbon!!
+
+                homeAvgCarbonLiveData.value = (carbonOneAvg + carbonTwoAvg) / 2
             }
 
         })
@@ -217,6 +243,11 @@ class DataRepository {
             override fun onDataChange(p0: DataSnapshot) {
                 val totalCarbon = p0.getValue(Double::class.java)
                 liveData.value = totalCarbon
+
+                if (deviceId == OutletNameUtil.OUTLET_ONE) carbonTotalOne = totalCarbon!!
+                else carbonTotalTwo = totalCarbon!!
+
+                homeTotalCarbonLiveData.value = carbonTotalOne + carbonTotalTwo
             }
 
         })
@@ -421,5 +452,16 @@ class DataRepository {
 
     fun getHomeCurrentTotalObservable(): MutableLiveData<Double> = homeCurrentTotalLiveData
 
+    fun getHomeCarbonCurrentObservable(): MutableLiveData<Double> = homeCurrentCarbonLiveData
+
+    fun getHomeCarbonAvgObservable(): MutableLiveData<Double> = homeAvgCarbonLiveData
+
+    fun getHomeCarbonTotalObservable(): MutableLiveData<Double> = homeTotalCarbonLiveData
+
+    fun getHomeCostCurrentObservable(): MutableLiveData<Double> = homeCurrentCostLiveData
+
+    fun getHomeCostAvgObservable(): MutableLiveData<Double> = homeAvgCostLiveData
+
+    fun getHomeCostTotalObservable(): MutableLiveData<Double> = homeTotalCostLiveData
 
 }

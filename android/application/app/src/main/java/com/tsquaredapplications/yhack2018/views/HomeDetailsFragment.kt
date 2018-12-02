@@ -33,8 +33,50 @@ class HomeDetailsFragment : Fragment() {
         setCurrentUsageObserver()
         setCurrentAvgObserver()
         setCurrentTotalObserver()
+        setCurrentCarbonObserver()
+        setAvgCarbonObserver()
+        setTotalCarbonObserver()
 
+        setCurrentCostObserver()
+        setTotalCostObserver()
+        setAvgCostObserver()
 
+    }
+
+    private fun setAvgCostObserver() {
+        viewModel.getHomeCostAvgObservable().observe(this, Observer {
+            cost_avg_ticker.text = "$$it"
+        })
+    }
+
+    private fun setTotalCostObserver() {
+        viewModel.getHomeCostTotalObservable().observe(this, Observer {
+            cost_total_ticker.text = "$$it"
+        })
+    }
+
+    private fun setCurrentCostObserver() {
+        viewModel.getHomeCostCurrentObserver().observe(this, Observer {
+            cost_current_ticker.text = "$$it"
+        })
+    }
+
+    private fun setTotalCarbonObserver() {
+        viewModel.getHomeCarbonTotalObservable().observe(this, Observer {
+            carbon_total_ticker.text = "$it"
+        })
+    }
+
+    private fun setAvgCarbonObserver() {
+        viewModel.getHomeCarbonAvgObservable().observe(this, Observer {
+            carbon_avg_ticker.text = "$it"
+        })
+    }
+
+    private fun setCurrentCarbonObserver() {
+        viewModel.getHomeCarbonCurrentObservable().observe(this, Observer {
+            carbon_output_ticker.text = "$it"
+        })
     }
 
     private fun setCurrentUsageObserver() {
