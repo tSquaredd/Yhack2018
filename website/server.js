@@ -144,23 +144,23 @@ const port = 4444;
 
 // Starting the server
 // Visit the page @ http://localhost:4444
-app.listen(port, () => {
-    serverLog('Server started');
-});
-// server.listen(port, () => {
+// app.listen(port, () => {
 //     serverLog('Server started');
 // });
+server.listen(port, () => {
+    serverLog('Server started');
+});
 
 
 
-// // These functions will happen when we receive a connection and then also 
+// // These functions will happen when we receive a connection and then also
 // // on every action that matches the name of the type we got
-// global.io.on('connection', function(socket){
+global.io.on('connection', function(socket){
 
-//     console.log('User Connected: ' + socket.id);
+    console.log('User Connected: ' + socket.id);
     
 
-//     socket.on('disconnect', () => {
-//         console.log('User disconnected: ' + socket.id);
-//     });
-// });
+    socket.on('disconnect', () => {
+        console.log('User disconnected: ' + socket.id);
+    });
+});

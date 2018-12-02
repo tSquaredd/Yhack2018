@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+
+    wattli:
+        image: wattli/node
+        ports:
+            - 80:4444
+        volumes:
+            - .:/usr/src/app
+

@@ -1,8 +1,8 @@
 Hello, welcome to the project!
 
-<button value="device1" class="btn outlet-{{device1.status.isOn}}" onclick="buttonClick(this)">{{device1.status.isOn}}</button>
+<button id="outlet-one" class="btn {{#if device1.status.isOn}} btn-success {{else}} btn-danger {{/if}}" onclick="buttonClick(this)">{{deviceNames.outlet-one}}</button>
 <br><br>
-<button value="device2" class="btn btn-primary outlet-{{device2.status.isOn}}" onclick="buttonClick(this)">{{device2.status.isOn}}</button>
+<button id="outlet-two" class="btn {{#if device2.status.isOn}} btn-success {{else}} btn-danger {{/if}}" onclick="buttonClick(this)">{{deviceNames.outlet-two}}</button>
 
 
 <br><br>
@@ -13,6 +13,28 @@ Hello, welcome to the project!
 /******************************************************************************
  * UI Functions
  *****************************************************************************/
+
+ function buttonClick(button) {
+     console.log(button.classList.contains('btn-danger'));
+    if (button.classList.contains('btn-success')) {
+        turnOff(button);
+    }
+    else {
+        turnOn(button);
+    }
+ }
+
+function turnOff(button) {
+    button.classList.remove('btn-success');
+    button.classList.add('btn-danger');
+    request(button.id, 'false');
+}
+
+function turnOn(button) {
+    button.classList.remove('btn-danger');
+    button.classList.add('btn-success');
+    request(button.id, 'true');
+}
 
 function request(device, status) {
     fetch(`http://localhost:4444/status/${device}/${status}`).then(function(response) {
@@ -72,6 +94,37 @@ function drawBackgroundColor() {
         background-color: #00ff00;
     }
 </style>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+    var socket = io();
+    socket.emit('connection');
+    
+    socket.on('notify-subscribers', (topic, msg) => {
+        console.log(topic + ' + ' + msg);
+        var messageDiv = document.getElementById('messages');
+        var message = document.createElement('div');
+        message.classList.add('message');
+        var dateDiv = document.createElement('div');
+        var d = new Date();
+        dateDiv.classList.add('message-date');
+        dateDiv.innerHTML = d.toLocaleString();
+        message.appendChild(dateDiv);
+        var topicDiv = document.createElement('div');
+        topicDiv.classList.add('message-topic');
+        topicDiv.innerHTML = '<b>Topic: </b> ' + topic;
+        message.appendChild(topicDiv);
+        var msgDiv = document.createElement('div');
+        msgDiv.classList.add('message-msg');
+        msgDiv.innerHTML = '<b>Message: </b> ' + msg;
+        message.appendChild(msgDiv);
+        messageDiv.prepend(message);
+    });
+    window.onbeforeunload = function(e) {
+        socket.disconnect(0);
+    };
+</script>
 
 
 
