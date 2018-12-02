@@ -29,10 +29,8 @@ router.all('/*', (req, res, next) => {
 });
 
 router.get('/', (req, res) => {
-    // console.log(firebase.database());
 
     var ref = firebase.database().ref("/").once('value').then(function(snapshot) {
-        // console.log(snapshot.val());
 
         const device1 = snapshot.val().devices['outlet-one'];
         const device2 = snapshot.val().devices['outlet-two'];
@@ -46,16 +44,8 @@ router.get('/', (req, res) => {
             device2.status.isOn = true;
         } else { device2.status.isOn = false; }
 
-        // console.log(device1);
-        // console.log(device2);
-
         res.render('pages/homepage', {deviceNames: deviceNames, device1: device1, device2: device2});
-        // ...
       });
-
-    // console.log(ref);
-
-    
 });
 
 router.get('/update/:device/:time/:watts', (req, res) => {
@@ -113,6 +103,19 @@ router.get('/status/:device/:isOn', (req, res) => {
     }
 
     
+});
+
+// Route to forward from arduino to firebase function
+router.get('/addData/:time/:device/:value', (req, res) => {
+    const time = req.params.time;
+    const device = req.params.device;
+    const value = req.params.value;
+
+    console.log(`Time: ${time}, Device: ${device}, Value: ${value}`);
+
+    res.set('Content-Type', 'text/plain');
+    res.send('Worked');
+
 });
 
 
