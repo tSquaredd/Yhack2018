@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_feed"
+        android:icon="@drawable/ic_socket"
+        android:title="@string/outlets" />
+
+    <item
+        android:id="@+id/nav_home_details"
+        android:icon="@drawable/ic_house"
+        android:title="@string/home" />
+
+</menu>
