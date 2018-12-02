@@ -27,138 +27,418 @@
     <com.jjoe64.graphview.GraphView
         android:id="@+id/graph_view"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="2dp"
         android:layout_margin="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/device_name" />
 
-
-    <TextView
-        android:id="@+id/current_usage_header"
-        style="@style/TextAppearance.AppCompat.Large"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:text="@string/current_usage"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/graph_view" />
-
-    <com.robinhood.ticker.TickerView
-        android:id="@+id/current_usage_ticker"
-        style="@style/TextAppearance.AppCompat.Large"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@+id/current_usage_header"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:text="66 kW/hr" />
-
-    <TextView
-        android:id="@+id/avg_usage_header"
-        style="@style/TextAppearance.AppCompat.Large"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/avg_usage"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/current_usage_header" />
-
-    <com.robinhood.ticker.TickerView
-        android:id="@+id/avg_usage_ticker"
-        style="@style/TextAppearance.AppCompat.Large"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/avg_usage_header"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:text="32 kW/hr" />
-
-    <TextView
-        android:id="@+id/total_usage_header"
-        style="@style/TextAppearance.AppCompat.Large"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/total_usage"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/avg_usage_header" />
-
-    <com.robinhood.ticker.TickerView
-        android:id="@+id/total_usage_ticker"
-        style="@style/TextAppearance.AppCompat.Large"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/total_usage_header"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:text="567 kW" />
-
-    <TextView
-        android:id="@+id/carbon_output_header"
-        style="@style/TextAppearance.AppCompat.Large"
-        android:layout_width="wrap_content"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/energy_card"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="@string/carbon_output"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/total_usage_header" />
-
-    <com.robinhood.ticker.TickerView
-        android:id="@+id/carbon_output_ticker"
-        style="@style/TextAppearance.AppCompat.Large"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/carbon_output_header"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:text="0.123 g/kWhr" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/graph_view">
 
-    <TextView
-        android:id="@+id/cost_overall_header"
-        style="@style/TextAppearance.AppCompat.Large"
-        android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <TextView
+                android:id="@+id/energy_label"
+                style="@style/TextAppearance.AppCompat.Large"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/energy"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <TextView
+                android:id="@+id/current_usage_header"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/current"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toStartOf="@+id/avg_usage_header"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/energy_label" />
+
+            <com.robinhood.ticker.TickerView
+                android:id="@+id/current_usage_ticker"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/avg_usage_header"
+                app:layout_constraintStart_toStartOf="@+id/current_usage_header"
+                app:layout_constraintTop_toBottomOf="@+id/current_usage_header"
+                tools:text="66" />
+
+            <TextView
+                android:id="@+id/avg_usage_header"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/avg"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toEndOf="@id/total_usage_header"
+                app:layout_constraintEnd_toStartOf="@+id/total_usage_header"
+                app:layout_constraintStart_toEndOf="@+id/current_usage_header"
+                app:layout_constraintTop_toBottomOf="@id/energy_label" />
+
+            <com.robinhood.ticker.TickerView
+                android:id="@+id/avg_usage_ticker"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toStartOf="@+id/total_usage_header"
+                app:layout_constraintStart_toStartOf="@+id/avg_usage_header"
+                app:layout_constraintTop_toBottomOf="@id/avg_usage_header"
+                tools:text="32" />
+
+
+            <TextView
+                android:id="@+id/total_usage_header"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:text="@string/total"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/avg_usage_header"
+                app:layout_constraintTop_toBottomOf="@id/energy_label" />
+
+
+            <com.robinhood.ticker.TickerView
+                android:id="@+id/total_usage_ticker"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                app:layout_constraintEnd_toEndOf="@+id/total_usage_header"
+                app:layout_constraintStart_toStartOf="@+id/total_usage_header"
+                app:layout_constraintTop_toBottomOf="@+id/total_usage_header"
+                tools:text="567" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/carbon_card"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="@string/overall_cost"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/carbon_output_header" />
-
-    <com.robinhood.ticker.TickerView
-        android:id="@+id/overall_cost_ticker"
-        style="@style/TextAppearance.AppCompat.Large"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/cost_overall_header"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:text="$100" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/energy_card">
 
-    <TextView
-        android:id="@+id/cost_per_header"
-        style="@style/TextAppearance.AppCompat.Large"
-        android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <TextView
+                android:id="@+id/carbon_label"
+                style="@style/TextAppearance.AppCompat.Large"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/carbon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <TextView
+                android:id="@+id/carbon_output_header"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/current"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toStartOf="@+id/carbon_avg_header"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/carbon_label" />
+
+            <com.robinhood.ticker.TickerView
+                android:id="@+id/carbon_output_ticker"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/carbon_avg_header"
+                app:layout_constraintStart_toStartOf="@+id/carbon_output_header"
+                app:layout_constraintTop_toBottomOf="@+id/carbon_output_header"
+                tools:text="66" />
+
+            <TextView
+                android:id="@+id/carbon_avg_header"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/avg"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toEndOf="@id/carbon_total_header"
+                app:layout_constraintEnd_toStartOf="@+id/carbon_total_header"
+                app:layout_constraintStart_toEndOf="@+id/carbon_output_header"
+                app:layout_constraintTop_toBottomOf="@id/carbon_label" />
+
+            <com.robinhood.ticker.TickerView
+                android:id="@+id/carbon_avg_ticker"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toStartOf="@+id/carbon_total_header"
+                app:layout_constraintStart_toStartOf="@+id/carbon_avg_header"
+                app:layout_constraintTop_toBottomOf="@id/carbon_avg_header"
+                tools:text="32" />
+
+
+            <TextView
+                android:id="@+id/carbon_total_header"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:text="@string/total"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/carbon_avg_header"
+                app:layout_constraintTop_toBottomOf="@id/carbon_label" />
+
+
+            <com.robinhood.ticker.TickerView
+                android:id="@+id/carbon_total_ticker"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                app:layout_constraintEnd_toEndOf="@+id/carbon_total_header"
+                app:layout_constraintStart_toStartOf="@+id/carbon_total_header"
+                app:layout_constraintTop_toBottomOf="@+id/carbon_total_header"
+                tools:text="567" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="@string/cost_per_hour"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cost_overall_header" />
-
-    <com.robinhood.ticker.TickerView
-        android:id="@+id/cost_per_ticker"
-        style="@style/TextAppearance.AppCompat.Large"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/cost_per_header"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:text="$1 / hr" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/carbon_card">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <TextView
+                android:id="@+id/cost_label"
+                style="@style/TextAppearance.AppCompat.Large"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/cost"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <TextView
+                android:id="@+id/cost_current_header"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/current"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toStartOf="@+id/cost_avg_header"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cost_label" />
+
+            <com.robinhood.ticker.TickerView
+                android:id="@+id/cost_current_ticker"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/cost_avg_header"
+                app:layout_constraintStart_toStartOf="@+id/cost_current_header"
+                app:layout_constraintTop_toBottomOf="@+id/cost_current_header"
+                tools:text="66" />
+
+            <TextView
+                android:id="@+id/cost_avg_header"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/avg"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toEndOf="@id/cost_total_header"
+                app:layout_constraintEnd_toStartOf="@+id/cost_total_header"
+                app:layout_constraintStart_toEndOf="@+id/cost_current_header"
+                app:layout_constraintTop_toBottomOf="@id/cost_label" />
+
+            <com.robinhood.ticker.TickerView
+                android:id="@+id/cost_avg_ticker"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toStartOf="@+id/cost_total_header"
+                app:layout_constraintStart_toStartOf="@+id/cost_avg_header"
+                app:layout_constraintTop_toBottomOf="@id/cost_avg_header"
+                tools:text="32" />
+
+
+            <TextView
+                android:id="@+id/cost_total_header"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:text="@string/total"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/cost_avg_header"
+                app:layout_constraintTop_toBottomOf="@id/cost_label" />
+
+
+            <com.robinhood.ticker.TickerView
+                android:id="@+id/cost_total_ticker"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                app:layout_constraintEnd_toEndOf="@+id/cost_total_header"
+                app:layout_constraintStart_toStartOf="@+id/cost_total_header"
+                app:layout_constraintTop_toBottomOf="@+id/cost_total_header"
+                tools:text="567" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.cardview.widget.CardView>
+
+
+
+
+    <!--<TextView-->
+    <!--android:id="@+id/carbon_output_header"-->
+    <!--style="@style/TextAppearance.AppCompat.Large"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginStart="8dp"-->
+    <!--android:layout_marginTop="8dp"-->
+    <!--android:text="@string/carbon_output"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:layout_constraintTop_toBottomOf="@id/total_usage_header" />-->
+
+    <!--<com.robinhood.ticker.TickerView-->
+    <!--android:id="@+id/carbon_output_ticker"-->
+    <!--style="@style/TextAppearance.AppCompat.Large"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginEnd="8dp"-->
+    <!--app:layout_constraintBottom_toBottomOf="@+id/carbon_output_header"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--tools:text="0.123 g/kWhr" />-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/cost_overall_header"-->
+    <!--style="@style/TextAppearance.AppCompat.Large"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginStart="8dp"-->
+    <!--android:layout_marginTop="8dp"-->
+    <!--android:text="@string/overall_cost"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:layout_constraintTop_toBottomOf="@id/carbon_output_header" />-->
+
+    <!--<com.robinhood.ticker.TickerView-->
+    <!--android:id="@+id/overall_cost_ticker"-->
+    <!--style="@style/TextAppearance.AppCompat.Large"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginEnd="8dp"-->
+    <!--app:layout_constraintBottom_toBottomOf="@+id/cost_overall_header"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--tools:text="$100" />-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/cost_per_header"-->
+    <!--style="@style/TextAppearance.AppCompat.Large"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginStart="8dp"-->
+    <!--android:layout_marginTop="8dp"-->
+    <!--android:text="@string/cost_per_hour"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:layout_constraintTop_toBottomOf="@id/cost_overall_header" />-->
+
+    <!--<com.robinhood.ticker.TickerView-->
+    <!--android:id="@+id/cost_per_ticker"-->
+    <!--style="@style/TextAppearance.AppCompat.Large"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginEnd="8dp"-->
+    <!--app:layout_constraintBottom_toBottomOf="@+id/cost_per_header"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--tools:text="$1 / hr" />-->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

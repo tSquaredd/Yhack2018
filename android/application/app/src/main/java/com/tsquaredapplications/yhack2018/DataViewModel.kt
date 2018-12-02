@@ -5,22 +5,9 @@ import androidx.lifecycle.ViewModel
 
 class DataViewModel : ViewModel() {
     private val repo: DataRepository = DataRepository()
-    private var outletOneLiveData = MutableLiveData<Boolean>()
-    private var outletTwoLiveData = MutableLiveData<Boolean>()
 
+    fun getSwitchObservable(deviceId: String): MutableLiveData<Boolean> = repo.getSwitchObservable(deviceId)
 
-    init {
-
-        outletOneLiveData = repo.getSwitchObservable(0)
-        outletTwoLiveData = repo.getSwitchObservable(1)
-    }
-
-    fun getSwitchObservable(num: Int): MutableLiveData<Boolean> {
-        return when (num) {
-            0 -> return outletOneLiveData
-            else -> outletTwoLiveData
-        }
-    }
 
     fun setSwitch(deviceId: String, isOn: Boolean) {
         repo.setSwitch(deviceId, isOn)
@@ -37,4 +24,20 @@ class DataViewModel : ViewModel() {
     fun masterToggle(toOn: Boolean){
         repo.masterToggle(toOn)
     }
+
+    fun getAvgUsageObservable(deviceId: String) = repo.getAvgUsageObservable(deviceId)
+
+    fun getTotalUsageObservable(deviceId: String) = repo.getTotalUsageObservable(deviceId)
+
+    fun getTotalCarbonUsageObservable(deviceId: String) = repo.getTotalCarbonObservable(deviceId)
+
+    fun getAvgCarbonUsageObservable(deviceId: String) = repo.getAvgCarbonObservable(deviceId)
+
+    fun getCurrentCarbonObservable(deviceId: String) = repo.getCurrentCarbonObservable(deviceId)
+
+    fun getCurrentCostObservable(deviceId: String) = repo.getCurrentCostObservable(deviceId)
+
+    fun getTotalCostObservable(deviceId: String) = repo.getTotalCostObservable(deviceId)
+
+    fun getAvgCostObservable(deviceId: String) = repo.getAvgCostObservable(deviceId)
 }

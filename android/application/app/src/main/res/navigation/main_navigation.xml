@@ -9,12 +9,21 @@
         android:id="@+id/nav_feed"
         android:name="com.tsquaredapplications.yhack2018.views.DeviceFeedFragment"
         android:label="fragment_device_feed"
-        tools:layout="@layout/fragment_device_feed" />
+        tools:layout="@layout/fragment_device_feed" >
+        <action
+            android:id="@+id/action_nav_feed_to_nav_details"
+            app:destination="@id/nav_details" />
+    </fragment>
     <fragment
         android:id="@+id/nav_details"
         android:name="com.tsquaredapplications.yhack2018.views.DeviceDetailsFragment"
         android:label="fragment_device_details"
-        tools:layout="@layout/fragment_device_details" />
+        tools:layout="@layout/fragment_device_details" >
+        <argument
+            android:name="device_id"
+            android:defaultValue="device-one"
+            app:argType="string" />
+    </fragment>
     <fragment
         android:id="@+id/nav_home_details"
         android:name="com.tsquaredapplications.yhack2018.views.HomeDetailsFragment"

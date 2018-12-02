@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -44,7 +45,25 @@ class DeviceFeedFragment : Fragment() {
         setNameObservers()
         setCurrentUsageObservers()
         setUsageListObservers()
+        setDetailClickListeners()
 
+    }
+
+    private fun setDetailClickListeners() {
+        outlet_one.spark_view.setOnClickListener {
+            navigateToDetailFragment(OutletNameUtil.OUTLET_ONE)
+        }
+
+        outlet_two.spark_view.setOnClickListener {
+            navigateToDetailFragment(OutletNameUtil.OUTLET_TWO)
+        }
+    }
+
+    private fun navigateToDetailFragment(deviceId: String){
+        val directions =
+            DeviceFeedFragmentDirections.actionNavFeedToNavDetails().setDeviceId(deviceId)
+
+        findNavController().navigate(directions)
     }
 
     private fun setUsageListObservers() {
@@ -72,11 +91,11 @@ class DeviceFeedFragment : Fragment() {
     }
 
     private fun setupSwitchObservers() {
-        viewModel.getSwitchObservable(0).observe(this, Observer {
+        viewModel.getSwitchObservable(OutletNameUtil.OUTLET_ONE).observe(this, Observer {
             outlet_one.outlet_switch.isChecked = it
         })
 
-        viewModel.getSwitchObservable(1).observe(this, Observer {
+        viewModel.getSwitchObservable(OutletNameUtil.OUTLET_TWO).observe(this, Observer {
             outlet_two.outlet_switch.isChecked = it
         })
     }
