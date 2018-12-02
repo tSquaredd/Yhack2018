@@ -3,6 +3,7 @@ const {serverLog, errorLog, routeLog} = require('../logs/log');
 const {getUserOptions} = require('../functions/helpers');
 const passport = require('passport');
 const https = require('https');
+const fs = require('fs');
 
 const router = express.Router();
 
@@ -71,37 +72,53 @@ router.get('/status/:device/:isOn', (req, res) => {
 
     console.log(`${device} - ${status}`);
 
-    // Setting up the API call
-    const options = {
-        host:'https://us-central1-yhack2018-77c5f.cloudfunctions.net',
-        port: 443,
-        path: `setStatus?time=123&device=${device}&isOn=${status}`
-    };
+    // Reading the output file
+    var lock = fs.readFileSync('kidLock.txt', 'utf8');
 
-    // // Creating a callback for our API
-    const callback = (response) => {
-        var result = '';
-        // When it gets a data chunk add it to the result
-        response.on('data', (chunk) => {
-            console.log('Something');
-            result += chunk;
-        });
+    console.log("Lock: " + lock);
 
-        // When all the data has been transferred
-        response.on('end', () => {
+    if (lock === "true") {
+        console.log("LOCKED OUT");
+        res.set('Content-Type', 'application/json');
+        return res.send({status: "Locked out"});
+    }
+    else {
+        // Setting up the API call
+        const options = {
+            host:'https://us-central1-yhack2018-77c5f.cloudfunctions.net',
+            port: 443,
+            path: `setStatus?time=123&device=${device}&isOn=${status}`
+        };
 
-            // Logging that we used the API for this route
-            serverLog(`Update Status - Device: ${device} - Status: ${status}`);
+        // // Creating a callback for our API
+        const callback = (response) => {
+            var result = '';
+            // When it gets a data chunk add it to the result
+            response.on('data', (chunk) => {
+                console.log('Something');
+                result += chunk;
+            });
 
-            // Passing the data back to the client so they can display the map
-            res.set('Content-Type', 'application/json');
-            res.send({status: result});
-        });
+            // When all the data has been transferred
+            response.on('end', () => {
+
+                // Logging that we used the API for this route
+                serverLog(`Update Status - Device: ${device} - Status: ${status}`);
+
+                global.io.emit('updateStatus', device, status);
+
+                // Passing the data back to the client so they can display the map
+                res.set('Content-Type', 'application/json');
+                res.send({status: "Worked"});
+            });
                 
+        }
+
+        // // Calling the Google Maps API
+        https.request(`https://us-central1-yhack2018-77c5f.cloudfunctions.net/setStatus?time=123&device=${device}&isOn=${status}`, callback).end();
     }
 
-    // // Calling the Google Maps API
-    https.request(`https://us-central1-yhack2018-77c5f.cloudfunctions.net/setStatus?time=123&device=${device}&isOn=${status}`, callback).end();
+    
 });
 
 
