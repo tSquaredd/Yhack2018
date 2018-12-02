@@ -23,7 +23,6 @@ console.log()
 
 
 router.all('/*', (req, res, next) => {
-    routeLog(`${req.method} ${req.originalUrl}`);
     req.app.locals.layout = 'main';
     next();
 });
@@ -115,7 +114,6 @@ router.get('/addData/:time/:device/:value', (req, res) => {
 
     res.set('Content-Type', 'text/plain');
     res.send('Worked');
-
 });
 
 
