@@ -24,66 +24,49 @@ Hello, welcome to the project!
     }
  }
 
-function turnOff(button) {
+ function offButton(button) {
     button.classList.remove('btn-success');
     button.classList.add('btn-danger');
-    request(button.id, 'false');
+ }
+
+  function onButton(button) {
+    button.classList.remove('btn-danger');
+    button.classList.add('btn-success');
+ }
+
+function turnOff(button) {
+    offButton(button);
+    request(button.id, 'false', button);
 }
 
 function turnOn(button) {
-    button.classList.remove('btn-danger');
-    button.classList.add('btn-success');
-    request(button.id, 'true');
+    onButton(button);
+    request(button.id, 'true', button);
 }
 
-function request(device, status) {
-    fetch(`http://localhost:4444/status/${device}/${status}`).then(function(response) {
+function request(device, status, button) {
+    fetch(`/status/${device}/${status}`).then(function(response) {
         return response.json();
     })
     .then(function(myJson) {
-        console.log(JSON.stringify(myJson));
+        if (myJson.status !== "Worked") {
+            console.log("Locked out");
+            if (button.classList.contains('btn-success')) {
+                offButton(button);
+            }
+            else {
+                onButton(button);
+            }
+        }
+        else {
+            console.log("Updated Correctly");
+        }
     }).catch(err => {
         console.log(err);
     });
 }
 
 </script>
-
-
-  <!-- <div id="chart_div"></div>
-
-
-  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-  <script>
-      google.charts.load('current', {packages: ['corechart', 'line']});
-google.charts.setOnLoadCallback(drawBackgroundColor);
-
-function drawBackgroundColor() {
-      var data = new google.visualization.DataTable();
-      data.addColumn('number', 'Time');
-      data.addColumn('number', 'Watts');
-
-      data.addRows([
-        {{#each device1.data.list }}
-            [{{this.time}}, {{this.watts}}],
-        {{/each}}
-      ]);
-
-      var options = {
-        hAxis: {
-          title: 'Time'
-        },
-        vAxis: {
-          title: 'Popularity'
-        },
-        backgroundColor: '#f1f8e9'
-      };
-
-      var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-      chart.draw(data, options);
-    }
-  </script>
-  -->
 
 <style>
     .outlet-false {
@@ -101,26 +84,19 @@ function drawBackgroundColor() {
     var socket = io();
     socket.emit('connection');
     
-    socket.on('notify-subscribers', (topic, msg) => {
-        console.log(topic + ' + ' + msg);
-        var messageDiv = document.getElementById('messages');
-        var message = document.createElement('div');
-        message.classList.add('message');
-        var dateDiv = document.createElement('div');
-        var d = new Date();
-        dateDiv.classList.add('message-date');
-        dateDiv.innerHTML = d.toLocaleString();
-        message.appendChild(dateDiv);
-        var topicDiv = document.createElement('div');
-        topicDiv.classList.add('message-topic');
-        topicDiv.innerHTML = '<b>Topic: </b> ' + topic;
-        message.appendChild(topicDiv);
-        var msgDiv = document.createElement('div');
-        msgDiv.classList.add('message-msg');
-        msgDiv.innerHTML = '<b>Message: </b> ' + msg;
-        message.appendChild(msgDiv);
-        messageDiv.prepend(message);
+    socket.on('updateStatus', (buttonID, status) => {
+        console.log('BUtton: ' + buttonID + ' - Status: ' + status);
+
+        var button = document.getElementById(buttonID);
+
+        if (status === 'true') {
+            onButton(button);
+        }
+        else {
+            offButton(button);
+        }
     });
+
     window.onbeforeunload = function(e) {
         socket.disconnect(0);
     };

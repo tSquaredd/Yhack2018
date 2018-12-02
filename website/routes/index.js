@@ -3,6 +3,7 @@ const {serverLog, errorLog, routeLog} = require('../logs/log');
 const {getUserOptions} = require('../functions/helpers');
 const passport = require('passport');
 const https = require('https');
+const fs = require('fs');
 
 const router = express.Router();
 
@@ -22,16 +23,13 @@ console.log()
 
 
 router.all('/*', (req, res, next) => {
-    routeLog(`${req.method} ${req.originalUrl}`);
     req.app.locals.layout = 'main';
     next();
 });
 
 router.get('/', (req, res) => {
-    // console.log(firebase.database());
 
     var ref = firebase.database().ref("/").once('value').then(function(snapshot) {
-        // console.log(snapshot.val());
 
         const device1 = snapshot.val().devices['outlet-one'];
         const device2 = snapshot.val().devices['outlet-two'];
@@ -45,16 +43,8 @@ router.get('/', (req, res) => {
             device2.status.isOn = true;
         } else { device2.status.isOn = false; }
 
-        // console.log(device1);
-        // console.log(device2);
-
         res.render('pages/homepage', {deviceNames: deviceNames, device1: device1, device2: device2});
-        // ...
       });
-
-    // console.log(ref);
-
-    
 });
 
 router.get('/update/:device/:time/:watts', (req, res) => {
@@ -69,39 +59,61 @@ router.get('/status/:device/:isOn', (req, res) => {
     const device = req.params.device;
     const status = req.params.isOn;
 
-    console.log(`${device} - ${status}`);
+    // Reading the output file
+    var lock = fs.readFileSync('kidLock.txt', 'utf8');
 
-    // Setting up the API call
-    const options = {
-        host:'https://us-central1-yhack2018-77c5f.cloudfunctions.net',
-        port: 443,
-        path: `setStatus?time=123&device=${device}&isOn=${status}`
-    };
+    if (lock === "true") {
+        res.set('Content-Type', 'application/json');
+        return res.send({status: "Locked out"});
+    }
+    else {
+        // Setting up the API call
+        const options = {
+            host:'https://us-central1-yhack2018-77c5f.cloudfunctions.net',
+            port: 443,
+            path: `setStatus?time=123&device=${device}&isOn=${status}`
+        };
 
-    // // Creating a callback for our API
-    const callback = (response) => {
-        var result = '';
-        // When it gets a data chunk add it to the result
-        response.on('data', (chunk) => {
-            console.log('Something');
-            result += chunk;
-        });
+        // // Creating a callback for our API
+        const callback = (response) => {
+            var result = '';
+            // When it gets a data chunk add it to the result
+            response.on('data', (chunk) => {
+                result += chunk;
+            });
 
-        // When all the data has been transferred
-        response.on('end', () => {
+            // When all the data has been transferred
+            response.on('end', () => {
 
-            // Logging that we used the API for this route
-            serverLog(`Update Status - Device: ${device} - Status: ${status}`);
+                // Logging that we used the API for this route
+                serverLog(`Update Status - Device: ${device} - Status: ${status}`);
 
-            // Passing the data back to the client so they can display the map
-            res.set('Content-Type', 'application/json');
-            res.send({status: result});
-        });
+                global.io.emit('updateStatus', device, status);
+
+                // Passing the data back to the client so they can display the map
+                res.set('Content-Type', 'application/json');
+                res.send({status: "Worked"});
+            });
                 
+        }
+
+        // // Calling the Google Maps API
+        https.request(`https://us-central1-yhack2018-77c5f.cloudfunctions.net/setStatus?time=123&device=${device}&isOn=${status}`, callback).end();
     }
 
-    // // Calling the Google Maps API
-    https.request(`https://us-central1-yhack2018-77c5f.cloudfunctions.net/setStatus?time=123&device=${device}&isOn=${status}`, callback).end();
+    
+});
+
+// Route to forward from arduino to firebase function
+router.get('/addData/:time/:device/:value', (req, res) => {
+    const time = req.params.time;
+    const device = req.params.device;
+    const value = req.params.value;
+
+    console.log(`Time: ${time}, Device: ${device}, Value: ${value}`);
+
+    res.set('Content-Type', 'text/plain');
+    res.send('Worked');
 });
 
 
