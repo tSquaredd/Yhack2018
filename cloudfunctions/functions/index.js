@@ -44,6 +44,60 @@ function twoDecimals(value) {
     return Math.round(100 * value) / 100;
 }
 
+function sevenDecimals(value) {
+    return Math.round(10000000 * value) / 10000000;
+}
+
+
+function bypassShittyArduino(device, value) {
+
+    const kiloWatts = sevenDecimals(value / (1000 * 1800));
+
+    // Nesting promises is bad, but it works
+    const info = {
+        'watts': kiloWatts,
+        'time': "123"
+    };
+
+    
+
+    // Pushing the info into the array of timestamp/watts values
+    return admin.database().ref(`/${DEVICE}/${device}/data/list`).push(info).then(snapshot => {
+
+        // Updating the latest value inside the device
+        return admin.database().ref(`/${DEVICE}/${device}/data/latest`).update(info).then(snapshot => {
+
+            // Reading the current values from the database for this device
+            return admin.database().ref(`/${DEVICE}/${device}/totals`).once('value').then(snapshot => {
+
+                const total = twoDecimals(parseFloat(kiloWatts) + parseFloat(snapshot.val().watts));
+                const count = 1 + parseInt(snapshot.val().count);
+                const avg = twoDecimals(parseFloat(total / count));
+                const energy = {
+                    carbon: {
+                        current: twoDecimals(kiloWatts * carbonIntensity),
+                        total: twoDecimals(total * carbonIntensity),
+                        average: twoDecimals(avg * carbonIntensity)
+                    },
+                    price: {
+                        current: twoDecimals(kiloWatts * pricePerKwH),
+                        total: twoDecimals(total * pricePerKwH),
+                        average: twoDecimals(avg * pricePerKwH)
+                    }
+                };
+
+                // Updating the device's total wattage used
+                return admin.database().ref(`/${DEVICE}/${device}/totals`).update({watts: total, count: count, average: avg, energy: energy}).then(snapshot => {
+                    return;
+                });
+
+            }).catch(err => {
+                logError(err);
+            });
+        });
+    });
+}
+
 
 /******************************************************************************
  * Data ADDing Routes
@@ -340,4 +394,24 @@ exports.resetDatabase = functions.https.onRequest((req, res) => {
 });
 
 
+exports.arduinoIsShit = functions.database.ref(`/arduino/outlet-one`)
+    .onWrite((snapshot, context) => {
+        // GRAB THE SHITTY ARDUINO's DATA BECAUSE IT CAN't MAKE AN HTTP GET REQUEST!!!!!!!!!!
+      bypassShittyArduino('outlet-one', snapshot.after.val().watt);
 
+      // You must return a Promise when performing asynchronous tasks inside a Functions such as
+      // writing to the Firebase Realtime Database.
+      // Setting an "uppercase" sibling in the Realtime Database returns a Promise.
+      return () => {};
+});
+
+exports.arduinoIsStillShit = functions.database.ref(`/arduino/outlet-two`)
+    .onWrite((snapshot, context) => {
+        // GRAB THE SHITTY ARDUINO's DATA BECAUSE IT CAN't MAKE AN HTTP GET REQUEST!!!!!!!!!!
+      bypassShittyArduino('outlet-two', snapshot.after.val().watt);
+
+      // You must return a Promise when performing asynchronous tasks inside a Functions such as
+      // writing to the Firebase Realtime Database.
+      // Setting an "uppercase" sibling in the Realtime Database returns a Promise.
+      return () => {};
+});

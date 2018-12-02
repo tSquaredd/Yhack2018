@@ -1,11 +1,35 @@
-Hello, welcome to the project!
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="card">
+            <img src="/img/wattli.jpeg" height="128px" width="128px" alt="Wattli logo image">
+                <h3>&nbsp;&nbsp;&nbsp;&nbsp;Wattli</h3>
+            </div>
+    </div>
 
-<button id="outlet-one" class="btn {{#if device1.status.isOn}} btn-success {{else}} btn-danger {{/if}}" onclick="buttonClick(this)">{{deviceNames.outlet-one}}</button>
-<br><br>
-<button id="outlet-two" class="btn {{#if device2.status.isOn}} btn-success {{else}} btn-danger {{/if}}" onclick="buttonClick(this)">{{deviceNames.outlet-two}}</button>
+    {{!-- <div class="row justify-content-center">
+        <div class="col">
+            <div class="card col-md-4 col-md-offset-4 col-sm-10 col-sm-offset-1">
+                <div id="slogan">Your devices</div>
+            </div>
+        </div>
+    </div> --}}
 
+    <div class="row justify-content-center">
+        <div class="col">
+            <div class="card">
+                <button id="outlet-one" class="btn {{#if device1.status.isOn}} btn-success {{else}} btn-danger {{/if}}" onclick="buttonClick(this)">{{deviceNames.outlet-one}}</button>
+            </div>
+        </div>
+    </div>
 
-<br><br>
+    <div class="row justify-content-center">
+        <div class="col">
+            <div class="card">
+                <button id="outlet-two" class="btn {{#if device2.status.isOn}} btn-success {{else}} btn-danger {{/if}}" onclick="buttonClick(this)">{{deviceNames.outlet-two}}</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
 
@@ -75,6 +99,9 @@ function request(device, status, button) {
 
     .outlet-true {
         background-color: #00ff00;
+    }
+    .col {
+        max-width: 500px;
     }
 </style>
 
