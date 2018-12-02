@@ -39,7 +39,7 @@ router.get('/', (req, res) => {
         // console.log(device1);
         // console.log(device2);
 
-        res.render('pages/homepage', {outlet1: device1.data, outlet2: device2.data});
+        res.render('pages/homepage', {device1: device1, device2: device2});
         // ...
       });
 
@@ -58,44 +58,41 @@ router.get('/update/:device/:time/:watts', (req, res) => {
 
 router.get('/status/:device/:isOn', (req, res) => {
     const device = req.params.device;
-    const status = req.params.status;
+    const status = req.params.isOn;
 
     console.log(`${device} - ${status}`);
 
-    const result = {
-        device: device,
-        isOn: status
-    };
-
-    var info = {
-        'time': new Date(),
-        'isOn': status
-    };
-
+    // Setting up the API call
     const options = {
-        hostname: 'us-central1-yhack2018-77c5f.cloudfunctions.net',
+        host:'https://us-central1-yhack2018-77c5f.cloudfunctions.net',
         port: 443,
-        path: `/getStatus?device=${device}&isOn=${status}`,
-        method: 'GET'
-      };
-      
-        const httpsRequest = https.request(options, (httpsResponse) => {
-            console.log('statusCode:', httpsResponse.statusCode);
-            console.log('headers:', httpsResponse.headers);
-    
-            httpsResponse.on('data', (d) => {
-                process.stdout.write(d);
-            });
+        path: `setStatus?time=123&device=${device}&isOn=${status}`
+    };
 
-            httpsResponse.on('end', () => {
-                console.log("WORKING");
-                res.set('Content-Type', 'application/json');
-                res.send(result);
-            });
+    // // Creating a callback for our API
+    const callback = (response) => {
+        var result = '';
+        // When it gets a data chunk add it to the result
+        response.on('data', (chunk) => {
+            console.log('Something');
+            result += chunk;
         });
 
+        // When all the data has been transferred
+        response.on('end', () => {
 
-    
+            // Logging that we used the API for this route
+            serverLog(`Update Status - Device: ${device} - Status: ${status}`);
+
+            // Passing the data back to the client so they can display the map
+            res.set('Content-Type', 'application/json');
+            res.send({status: result});
+        });
+                
+    }
+
+    // // Calling the Google Maps API
+    https.request(`https://us-central1-yhack2018-77c5f.cloudfunctions.net/setStatus?time=123&device=${device}&isOn=${status}`, callback).end();
 });
 
 
