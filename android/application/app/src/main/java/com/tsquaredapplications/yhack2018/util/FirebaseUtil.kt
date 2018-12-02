@@ -56,5 +56,10 @@ class FirebaseUtil {
         fun getOutletCurrentCostDbRef(deviceId: String): DatabaseReference =
             FirebaseDatabase.getInstance().reference.child("devices").child(deviceId).child("totals")
                 .child("energy").child("price").child("current")
+
+
+        // HOME
+        fun getHomeCurrentUsageDbRef(): DatabaseReference =
+                FirebaseDatabase.getInstance().reference.child("")
     }
 }

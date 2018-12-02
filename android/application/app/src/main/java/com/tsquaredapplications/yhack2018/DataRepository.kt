@@ -11,6 +11,13 @@ import com.tsquaredapplications.yhack2018.util.OutletNameUtil
 
 class DataRepository {
 
+    var outletOneCurrent = 0.0
+    var outletTwoCurrent = 0.0
+    var outletOneAvg = 0.0
+    var outletTwoAvg = 0.0
+    var outletTotalOneCurrent = 0.0
+    var outletTotalTwoCurrent = 0.0
+
     private var outletOneLiveData = MutableLiveData<Boolean>()
     private var outletTwoLiveData = MutableLiveData<Boolean>()
 
@@ -50,6 +57,18 @@ class DataRepository {
     private var outletOneCostTotalLiveData = MutableLiveData<Double>()
     private var outletTwoCostTotalLiveData = MutableLiveData<Double>()
 
+    private var homeCurrentUsageLiveData = MutableLiveData<Double>()
+    private var homeCurrentAvgLiveData = MutableLiveData<Double>()
+    private var homeCurrentTotalLiveData = MutableLiveData<Double>()
+
+    private var homeTotalCarbonLiveData = MutableLiveData<Double>()
+    private var homeCurrentCarbonLiveData = MutableLiveData<Double>()
+    private var homeAvgCarbonLiveData = MutableLiveData<Double>()
+
+    private var homeTotalCostLiveData = MutableLiveData<Double>()
+    private var homeCurrentCostLiveData = MutableLiveData<Double>()
+    private var homeAvgCostLiveData = MutableLiveData<Double>()
+
     init {
         getOutletSwitchStream(OutletNameUtil.OUTLET_ONE, outletOneLiveData)
         getOutletSwitchStream(OutletNameUtil.OUTLET_TWO, outletTwoLiveData)
@@ -87,7 +106,25 @@ class DataRepository {
         getOutletCurrentCostStream(OutletNameUtil.OUTLET_ONE, outletOneCostCurrentLiveData)
         getOutletCurrentCostStream(OutletNameUtil.OUTLET_TWO, outletTwoCostCurrentLiveData)
 
+
+
+//        getHomeCurrentUsageStream()
+//        getHomeAvgUsageStream()
+//        getHomeTotalUsageStream()
+//
+//        getHomeTotalCarbonStream()
+//        getHomeAvgCarbonStream()
+//        getHomeCurrentCarbonStream()
+//
+//        getHomeTotalCostStream()
+//        getHomeAvgCostStream()
+//        getHomeCurrentCostStream()
+
     }
+
+//    private fun getHomeCurrentUsageStream() {
+//        val dbRef =
+//    }
 
     private fun getOutletTotalCostStream(deviceId: String, liveData: MutableLiveData<Double>){
         val dbRef = FirebaseUtil.getOutletTotalCostDbRef(deviceId)
@@ -195,6 +232,14 @@ class DataRepository {
             override fun onDataChange(p0: DataSnapshot) {
                 val totalUsage = p0.getValue(Double::class.java)
                 liveData.value = totalUsage
+
+                if (deviceId == OutletNameUtil.OUTLET_ONE)
+                    outletTotalOneCurrent = totalUsage!!
+                else
+                    outletTotalTwoCurrent = totalUsage!!
+
+                homeCurrentTotalLiveData.value = outletTotalOneCurrent + outletTotalTwoCurrent
+
             }
 
         })
@@ -210,7 +255,12 @@ class DataRepository {
 
             override fun onDataChange(p0: DataSnapshot) {
                 val avgUsage = p0.getValue(Double::class.java)
+                if (deviceId == OutletNameUtil.OUTLET_ONE) outletOneAvg = avgUsage!!
+                else outletTwoAvg = avgUsage!!
+
                 liveData.value = avgUsage
+
+                homeCurrentAvgLiveData.value = (outletOneAvg + outletTwoAvg) / 2
             }
 
         })
@@ -227,6 +277,12 @@ class DataRepository {
             override fun onDataChange(p0: DataSnapshot) {
                 val currentUsage = p0.getValue(Double::class.java)
                 liveData.value = currentUsage
+                currentUsage?.let {
+                    if (deviceId == OutletNameUtil.OUTLET_ONE) outletOneCurrent = currentUsage
+                    else outletTwoCurrent = currentUsage
+                    homeCurrentUsageLiveData.value = outletOneCurrent + outletTwoCurrent
+
+                }
             }
         })
     }
@@ -358,5 +414,12 @@ class DataRepository {
 
     fun getLineGraphObservable(deviceId: String): MutableLiveData<LineGraphSeries<DataPoint>> =
             if (deviceId == OutletNameUtil.OUTLET_ONE) outletOneGraphPointsLiveData else outletTwoGraphPointsLiveData
+
+    fun getHomeCurrentUsageObservable(): MutableLiveData<Double> = homeCurrentUsageLiveData
+
+    fun getHomeCurrentUsageAvgObservable(): MutableLiveData<Double> = homeCurrentAvgLiveData
+
+    fun getHomeCurrentTotalObservable(): MutableLiveData<Double> = homeCurrentTotalLiveData
+
 
 }
