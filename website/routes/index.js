@@ -18,9 +18,10 @@ var config = {
   };
 firebase.initializeApp(config);
 
-console.log()
 
-
+firebase.database().ref('arduino/outlet-one').onWrite((snapshot, context) => {
+    console.log('ARDUINO UPDATE WORKED!!!');
+});
 
 router.all('/*', (req, res, next) => {
     req.app.locals.layout = 'main';
