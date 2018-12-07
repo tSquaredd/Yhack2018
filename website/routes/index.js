@@ -19,8 +19,9 @@ var config = {
 firebase.initializeApp(config);
 
 
-firebase.database().ref('arduino/outlet-one').onWrite((snapshot, context) => {
+firebase.database().ref('/arduino/outlet-one').on('child_changed', (snapshot) => {
     console.log('ARDUINO UPDATE WORKED!!!');
+	console.log(snapshot.val());
 });
 
 router.all('/*', (req, res, next) => {
