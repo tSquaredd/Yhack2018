@@ -131,11 +131,11 @@ function request(device, status, button) {
     ];
 
 
-    google.charts.load('current', {'packages':['corechart']});
-    google.charts.setOnLoadCallback(drawChart());
+    google.charts.load('current', {'packages':['corechart', 'line']});
+    google.charts.setOnLoadCallback(drawChart);
 
     function drawChart(input) {
-        var data = google.visualization.arrayToDataTable(input);
+        var data = google.visualization.arrayToDataTable(outletOne);
 
         var options = {
             title: 'Outlet One Kilowatt Usage',

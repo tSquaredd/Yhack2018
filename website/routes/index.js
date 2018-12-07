@@ -47,7 +47,7 @@ router.get('/', (req, res) => {
       });
 });
 
-router.get('/pushReading/:device/:watts', (req, res) => {
+router.get('/push/:device/:watts', (req, res) => {
     const device = req.params.device;
     const watts = req.params.watts;
 
