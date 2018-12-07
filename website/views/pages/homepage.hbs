@@ -1,19 +1,15 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="card">
-            <img src="/img/wattli.jpeg" height="128px" width="128px" alt="Wattli logo image">
-                <h3>&nbsp;&nbsp;&nbsp;&nbsp;Wattli</h3>
+            <img src="/img/wattli.jpeg" height="64px" width="64px" alt="Wattli logo image">
+                <h3>Wattli</h3>
             </div>
-    </div>
 
-    <div class="row justify-content-center">
         <div class="card">
             <div id="curve_chart" class="googleChart"></div>
         </div>
-    </div>
 
 
-    <div class="row justify-content-center">
         <div class="col">
             <div class="card">
                 <button id="outlet-one" class="btn {{#if device1.status.isOn}} btn-success {{else}} btn-danger {{/if}}" onclick="buttonClick(this)">{{deviceNames.outlet-one}}</button>
@@ -61,7 +57,14 @@
     }
 	.googleChart {
 		height: 400px;
-		width: 90vw;
+		width: 75vw;
+	}
+@media only screen
+	and (max-device-width: 600px) {
+		.googleChart {
+			height: 400px;
+			width: 90vw;
+		}
 	}
 </style>
 

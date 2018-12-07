@@ -27,6 +27,15 @@ firebase.database().ref('/arduino/outlet-two').on('child_changed', (snapshot) =>
     global.io.emit('pushData', 'outlet-two', snapshot.val());
 });
 
+firebase.database().ref('/devices/outlet-one/status').on('child_changed', (snapshot) => {
+	global.io.emit('updateStatus', 'outlet-one', snapshot.val());
+});
+
+firebase.database().ref('/devices/outlet-two/status').on('child_changed', (snapshot) => {
+	global.io.emit('updateStatus', 'outlet-two', snapshot.val());
+});
+
+
 router.all('/*', (req, res, next) => {
     req.app.locals.layout = 'main';
     next();
