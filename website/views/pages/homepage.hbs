@@ -30,6 +30,35 @@
     </div> --}}
 </div>
 
+
+
+<style>
+    .outlet-false {
+        background-color: #ff0000;
+    }
+
+    .outlet-true {
+        background-color: #00ff00;
+    }
+    .col {
+        max-width: 500px;
+    }
+
+    .card {
+        border:none;
+        box-shadow: none;
+    }
+
+    h3 {
+        margin-top: 10px;
+    }
+</style>
+
+
+<!-- JavaScript includes -->
+<script src="/socket.io/socket.io.js"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
 <script>
 
 
@@ -89,33 +118,36 @@ function request(device, status, button) {
     });
 }
 
-</script>
+    
 
-<style>
-    .outlet-false {
-        background-color: #ff0000;
+    
+
+    
+
+    var outletOneCount = 3;
+    var outletOne = [['Period', 'Outlet One'],
+        ['0',  1000],
+        ['1',  1170],
+        ['2',  660],
+        ['3',  1030]];
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+    var data = google.visualization.arrayToDataTable(outletOne);
+
+    var options = {
+        title: 'Outlet One Kilowatt Usage',
+        curveType: 'function',
+        legend: { position: 'bottom' }
+    };
+
+    var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+    chart.draw(data, options);
     }
 
-    .outlet-true {
-        background-color: #00ff00;
-    }
-    .col {
-        max-width: 500px;
-    }
 
-    .card {
-        border:none;
-        box-shadow: none;
-    }
-
-    h3 {
-        margin-top: 10px;
-    }
-</style>
-
-<script src="/socket.io/socket.io.js"></script>
-
-<script>
     var socket = io();
     socket.emit('connection');
     
@@ -134,39 +166,15 @@ function request(device, status, button) {
 
     socket.on('pushData', (device, watts) => {
         console.log(`Data Pushed: ${device} ${watts}`);
+        if (device === 'outlet-one') {
+            outletOne.push([outletOneCount, watts]);
+            outletOneCount += 1;
+        }
     });
 
     window.onbeforeunload = function(e) {
         socket.disconnect(0);
     };
-</script>
-
-
-<!-- Chart displaying functions -->
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-<script type="text/javascript">
-    google.charts.load('current', {'packages':['corechart']});
-    google.charts.setOnLoadCallback(drawChart);
-
-    function drawChart() {
-    var data = google.visualization.arrayToDataTable([
-        ['Period', 'Outlet One'],
-        ['0',  1000],
-        ['1',  1170],
-        ['2',  660],
-        ['3',  1030]
-    ]);
-
-    var options = {
-        title: 'Company Performance',
-        curveType: 'function',
-        legend: { position: 'bottom' }
-    };
-
-    var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
-
-    chart.draw(data, options);
-    }
 </script>
 
 
