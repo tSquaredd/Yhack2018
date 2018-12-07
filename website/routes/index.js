@@ -47,12 +47,14 @@ router.get('/', (req, res) => {
       });
 });
 
-router.get('/update/:device/:time/:watts', (req, res) => {
+router.get('/pushReading/:device/:watts', (req, res) => {
     const device = req.params.device;
-    const time = req.params.time;
     const watts = req.params.watts;
 
-    res.send(`Device: ${device}, Time: ${time}, Watts: ${watts}`);
+    global.io.emit('pushData', device, watts);
+
+    res.set('Content-Type', 'application/json');
+                res.send({status: "Worked"});
 });
 
 router.get('/status/:device/:isOn', (req, res) => {

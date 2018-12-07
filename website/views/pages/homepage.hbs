@@ -133,6 +133,10 @@ function request(device, status, button) {
         }
     });
 
+    socket.on('pushData', (device, watts) => {
+        console.log(`Data Pushed: ${device} ${watts}`);
+    });
+
     window.onbeforeunload = function(e) {
         socket.disconnect(0);
     };

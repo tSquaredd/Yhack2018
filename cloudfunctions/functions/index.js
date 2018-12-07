@@ -40,8 +40,8 @@ function logError(err) {
     console.log(err);
 }
 
-function twoDecimals(value) {
-    return Math.round(100 * value) / 100;
+function wattliRounding(value) {
+    return value;
 }
 
 function sevenDecimals(value) {
@@ -49,7 +49,7 @@ function sevenDecimals(value) {
 }
 
 
-function bypassShittyArduino(device, value) {
+function bypassArduino(device, value) {
 
     const kiloWatts = sevenDecimals(value / (1000 * 1800));
 
@@ -59,6 +59,7 @@ function bypassShittyArduino(device, value) {
         'time': "123"
     };
 
+    fetch(`https://wattli.com/pushReading/${device}/${kiloWatts}`, (res) => {});
     
 
     // Pushing the info into the array of timestamp/watts values
@@ -70,19 +71,19 @@ function bypassShittyArduino(device, value) {
             // Reading the current values from the database for this device
             return admin.database().ref(`/${DEVICE}/${device}/totals`).once('value').then(snapshot => {
 
-                const total = twoDecimals(parseFloat(kiloWatts) + parseFloat(snapshot.val().watts));
+                const total = wattliRounding(parseFloat(kiloWatts) + parseFloat(snapshot.val().watts));
                 const count = 1 + parseInt(snapshot.val().count);
-                const avg = twoDecimals(parseFloat(total / count));
+                const avg = wattliRounding(parseFloat(total / count));
                 const energy = {
                     carbon: {
-                        current: twoDecimals(kiloWatts * carbonIntensity),
-                        total: twoDecimals(total * carbonIntensity),
-                        average: twoDecimals(avg * carbonIntensity)
+                        current: wattliRounding(kiloWatts * carbonIntensity),
+                        total: wattliRounding(total * carbonIntensity),
+                        average: wattliRounding(avg * carbonIntensity)
                     },
                     price: {
-                        current: twoDecimals(kiloWatts * pricePerKwH),
-                        total: twoDecimals(total * pricePerKwH),
-                        average: twoDecimals(avg * pricePerKwH)
+                        current: wattliRounding(kiloWatts * pricePerKwH),
+                        total: wattliRounding(total * pricePerKwH),
+                        average: wattliRounding(avg * pricePerKwH)
                     }
                 };
 
@@ -131,19 +132,19 @@ exports.addData = functions.https.onRequest((req, res) => {
             // Reading the current values from the database for this device
             return admin.database().ref(`/${DEVICE}/${device}/totals`).once('value').then(snapshot => {
 
-                const total = twoDecimals(parseFloat(value) + parseFloat(snapshot.val().watts));
+                const total = wattliRounding(parseFloat(value) + parseFloat(snapshot.val().watts));
                 const count = 1 + parseInt(snapshot.val().count);
-                const avg = twoDecimals(parseFloat(total / count));
+                const avg = wattliRounding(parseFloat(total / count));
                 const energy = {
                     carbon: {
-                        current: twoDecimals(value * carbonIntensity),
-                        total: twoDecimals(total * carbonIntensity),
-                        average: twoDecimals(avg * carbonIntensity)
+                        current: wattliRounding(value * carbonIntensity),
+                        total: wattliRounding(total * carbonIntensity),
+                        average: wattliRounding(avg * carbonIntensity)
                     },
                     price: {
-                        current: twoDecimals(value * pricePerKwH),
-                        total: twoDecimals(total * pricePerKwH),
-                        average: twoDecimals(avg * pricePerKwH)
+                        current: wattliRounding(value * pricePerKwH),
+                        total: wattliRounding(total * pricePerKwH),
+                        average: wattliRounding(avg * pricePerKwH)
                     }
                 };
 
@@ -289,7 +290,7 @@ exports.getHomeUsage = functions.https.onRequest((req, res) => {
         const outletOneTotal = parseFloat(query['outlet-one'].totals.watts);
         const outletTwoTotal = parseFloat(query['outlet-two'].totals.watts);
 
-        const total = twoDecimals(outletOneTotal + outletTwoTotal);
+        const total = wattliRounding(outletOneTotal + outletTwoTotal);
 
         return sendJSON(res, {watts: total});
     }).catch(err => {
@@ -352,14 +353,14 @@ exports.getCarbonAnalysis = functions.https.onRequest((req, res) => {
         const result = {
             carbon: {
                 fossilFuelPercentage: fossilFuelPercentage,
-                current: twoDecimals((oneCurrent + twoCurrent) * carbonIntensity),
-                total:   twoDecimals((oneTotal + twoTotal) * carbonIntensity),
-                average: twoDecimals(((oneTotal + twoTotal) / (oneCount + twoCount)) * carbonIntensity)
+                current: wattliRounding((oneCurrent + twoCurrent) * carbonIntensity),
+                total:   wattliRounding((oneTotal + twoTotal) * carbonIntensity),
+                average: wattliRounding(((oneTotal + twoTotal) / (oneCount + twoCount)) * carbonIntensity)
             },
             price: {
-                current: twoDecimals((oneCurrent + twoCurrent) * pricePerKwH),
-                total:   twoDecimals((oneTotal + twoTotal) * pricePerKwH),
-                average: twoDecimals(((oneTotal + twoTotal) / (oneCount + twoCount)) * pricePerKwH)
+                current: wattliRounding((oneCurrent + twoCurrent) * pricePerKwH),
+                total:   wattliRounding((oneTotal + twoTotal) * pricePerKwH),
+                average: wattliRounding(((oneTotal + twoTotal) / (oneCount + twoCount)) * pricePerKwH)
             }
         };
 
@@ -381,7 +382,7 @@ exports.resetDatabase = functions.https.onRequest((req, res) => {
     if (password === 'amazingpassword') {
         console.log("YOU MADE IT");
 
-        const reset = JSON.parse('{"outlet-one":{"data":{"latest":{"time":"000","watts":0},"list":{}},"status":{"isOn":"false","time":"000"},"totals":{"average":0,"count":0,"energy":{"carbon":{"average":0,"current":0,"total":0},"price":{"average":0,"current":0,"total":0}},"watts":0}},"outlet-two":{"data":{"latest":{"time":"000","watts":0},"list":{}},"status":{"isOn":"false","time":"000"},"totals":{"average":0,"count":0,"energy":{"carbon":{"average":0,"current":0,"total":0},"price":{"average":0,"current":0,"total":0}},"watts":0}}}');
+        const reset = JSON.parse('{"outlet-one":{"data":{"latest":{"time":"000","watts":0},"list":{}},"status":{"isOn":"true","time":"000"},"totals":{"average":0,"count":0,"energy":{"carbon":{"average":0,"current":0,"total":0},"price":{"average":0,"current":0,"total":0}},"watts":0}},"outlet-two":{"data":{"latest":{"time":"000","watts":0},"list":{}},"status":{"isOn":"true","time":"000"},"totals":{"average":0,"count":0,"energy":{"carbon":{"average":0,"current":0,"total":0},"price":{"average":0,"current":0,"total":0}},"watts":0}}}');
 
         return admin.database().ref(`/${DEVICE}`).update(reset).then(snapshot => {
             return workedResponse(res);
@@ -394,10 +395,10 @@ exports.resetDatabase = functions.https.onRequest((req, res) => {
 });
 
 
-exports.arduinoIsShit = functions.database.ref(`/arduino/outlet-one`)
+exports.arduinoCannotDoHTTP = functions.database.ref(`/arduino/outlet-one`)
     .onWrite((snapshot, context) => {
-        // GRAB THE SHITTY ARDUINO's DATA BECAUSE IT CAN't MAKE AN HTTP GET REQUEST!!!!!!!!!!
-      bypassShittyArduino('outlet-one', snapshot.after.val().watt);
+        // GRAB THE ARDUINO's DATA BECAUSE IT CAN't MAKE AN HTTP GET REQUEST!!!!!!!!!!
+        bypassArduino('outlet-one', snapshot.after.val().watt);
 
       // You must return a Promise when performing asynchronous tasks inside a Functions such as
       // writing to the Firebase Realtime Database.
@@ -405,10 +406,10 @@ exports.arduinoIsShit = functions.database.ref(`/arduino/outlet-one`)
       return () => {};
 });
 
-exports.arduinoIsStillShit = functions.database.ref(`/arduino/outlet-two`)
+exports.arduinoStillCannotDoHTTP = functions.database.ref(`/arduino/outlet-two`)
     .onWrite((snapshot, context) => {
-        // GRAB THE SHITTY ARDUINO's DATA BECAUSE IT CAN't MAKE AN HTTP GET REQUEST!!!!!!!!!!
-      bypassShittyArduino('outlet-two', snapshot.after.val().watt);
+        // GRAB THE ARDUINO's DATA BECAUSE IT CAN't MAKE AN HTTP GET REQUEST!!!!!!!!!!
+      bypassArduino('outlet-two', snapshot.after.val().watt);
 
       // You must return a Promise when performing asynchronous tasks inside a Functions such as
       // writing to the Firebase Realtime Database.
